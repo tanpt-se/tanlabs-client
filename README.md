@@ -1,90 +1,77 @@
-# React + Vite + Hono + Cloudflare Workers
+# TanLabs Client
 
-[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/vite-react-template)
+React + Vite + Hono + Cloudflare Workers web client with full auth (login, register, Google OAuth, i18n, session management).
 
-This template provides a minimal setup for building a React application with TypeScript and Vite, designed to run on Cloudflare Workers. It features hot module replacement, ESLint integration, and the flexibility of Workers deployments.
+## Architecture
 
-![React + TypeScript + Vite + Cloudflare Workers](https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/fc7b4b62-442b-4769-641b-ad4422d74300/public)
-
-<!-- dash-content-start -->
-
-🚀 Supercharge your web development with this powerful stack:
-
-- [**React**](https://react.dev/) - A modern UI library for building interactive interfaces
-- [**Vite**](https://vite.dev/) - Lightning-fast build tooling and development server
-- [**Hono**](https://hono.dev/) - Ultralight, modern backend framework
-- [**Cloudflare Workers**](https://developers.cloudflare.com/workers/) - Edge computing platform for global deployment
-
-### ✨ Key Features
-
-- 🔥 Hot Module Replacement (HMR) for rapid development
-- 📦 TypeScript support out of the box
-- 🛠️ ESLint configuration included
-- ⚡ Zero-config deployment to Cloudflare's global network
-- 🎯 API routes with Hono's elegant routing
-- 🔄 Full-stack development setup
-- 🔎 Built-in Observability to monitor your Worker
-
-Get started in minutes with local development or deploy directly via the Cloudflare dashboard. Perfect for building modern, performant web applications at the edge.
-
-<!-- dash-content-end -->
-
-## Getting Started
-
-To start a new project with this template, run:
-
-```bash
-npm create cloudflare@latest -- --template=cloudflare/templates/vite-react-template
+```
+Browser → tanlabs-client Worker (/api/*) → tanlabs-api
 ```
 
-A live deployment of this template is available at:
-[https://react-vite-template.templates.workers.dev](https://react-vite-template.templates.workers.dev)
+Same-origin API proxy avoids CORS. The Worker forwards requests with `X-Auth-Client: web`.
 
-## Development
+## Prerequisites
 
-Install dependencies:
+- Node.js 20+
+- [tanlabs-api](https://github.com/tanpt-se/tanlabs-api) running locally on port **8787**
+
+## Local development
+
+**Terminal 1 — API:**
+
+```bash
+cd ../tanlabs-api
+pnpm install
+pnpm dev          # http://localhost:8787
+pnpm seed-auth    # user@example.com / Password123!
+```
+
+**Terminal 2 — Client:**
 
 ```bash
 npm install
+cp .dev.vars.example .dev.vars   # optional; wrangler defaults API_ORIGIN to :8787
+cp .env.example .env             # optional Vite public env
+npm run dev                      # http://localhost:5101
 ```
 
-Start the development server with:
+## Environment
 
-```bash
-npm run dev
-```
+| File | Purpose |
+|------|---------|
+| `.dev.vars` | Worker secret `API_ORIGIN` (dev: `http://localhost:8787`) |
+| `.env` | Vite public vars (`VITE_*`) — see `.env.example` |
 
-Your application will be available at [http://localhost:5101](http://localhost:5101).
+Production Worker vars are in `wrangler.json` → `env.production.vars.API_ORIGIN`.
 
-## Production
+## Auth routes
 
-Build your project for production:
+| Path | Description |
+|------|-------------|
+| `/login` | Email/password + Google OAuth |
+| `/register` | Sign up + email verification flow |
+| `/verify-email` | OTP verification after register |
+| `/forgot-password` | Password recovery |
+| `/my-account` | 2FA, Google link, session revoke |
+| `/auth/session-ended` | Session terminated notice |
 
-```bash
-npm run build
-```
+## i18n
 
-Preview your build locally:
+Supported locales: **en**, **vi**, **ja**, **ko** (locale cookie: `client_authlab_locale`).
 
-```bash
-npm run preview
-```
+## Scripts
 
-Deploy your project to Cloudflare Workers:
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Dev server (port 5101) |
+| `npm run build` | Typecheck + production build |
+| `npm run deploy` | Deploy to Cloudflare Workers |
+| `npm run cf-typegen` | Regenerate Worker `Env` types |
+
+## Deploy
 
 ```bash
 npm run build && npm run deploy
 ```
 
-Monitor your workers:
-
-```bash
-npx wrangler tail
-```
-
-## Additional Resources
-
-- [Cloudflare Workers Documentation](https://developers.cloudflare.com/workers/)
-- [Vite Documentation](https://vitejs.dev/guide/)
-- [React Documentation](https://reactjs.org/)
-- [Hono Documentation](https://hono.dev/)
+Ensure `tanlabs-api` production CORS includes your client origin (`APP_ORIGIN`).

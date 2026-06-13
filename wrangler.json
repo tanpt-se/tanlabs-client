@@ -8,8 +8,18 @@
 		"enabled": true
 	},
 	"upload_source_maps": true,
+	"vars": {
+		"API_ORIGIN": "http://localhost:8787"
+	},
 	"assets": {
 		"directory": "./dist/client",
 		"not_found_handling": "single-page-application"
+	},
+	"env": {
+		"production": {
+			"vars": {
+				"API_ORIGIN": "https://tanlabs-api.nikinpham.com"
+			}
+		}
 	}
 }
