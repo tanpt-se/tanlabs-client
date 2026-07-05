@@ -1,12 +1,11 @@
 import { LoginForm } from '@/features/auth';
-import { AuthLayout } from '@/features/auth';
-import { resolveAuthNoticeByReason } from '@tanlabs/platform';
+import { resolveAuthNoticeByReason } from '@/features/auth/lib/login-validation';
 import { useSearchParams } from 'react-router-dom';
 
 import { getClientLang } from '@/shared/i18n';
 import { useLocale } from '@tanlabs/providers';
 import { resolveAuthenticatedRedirect } from '@/shared/routing';
-import { MiddlewareFallback } from '@tanlabs/web-common/auth/components/middleware-fallback';
+import { MiddlewareFallback } from '@/features/auth';
 import { clientAuthConfig } from '@/auth-config';
 
 export function LoginPage() {
@@ -49,9 +48,7 @@ export function LoginPage() {
         authCookieName={clientAuthConfig.cookies.auth}
         publicLoginPath={clientAuthConfig.routes.login}
       />
-      <AuthLayout app="web">
-        <LoginForm key={locale} lang={lang.login} nextPath={nextPath} notice={notice} />
-      </AuthLayout>
+      <LoginForm key={locale} lang={lang.login} nextPath={nextPath} notice={notice} />
     </>
   );
 }

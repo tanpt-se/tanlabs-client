@@ -1,16 +1,14 @@
 import { BRAND } from '@tanlabs/config';
 
 export function BrandMark({
-  app,
   className,
   compact = false,
 }: {
-  app: 'web' | 'admin';
   className?: string;
   compact?: boolean;
 }) {
-  const accent = app === 'admin' ? '#f97316' : '#0f766e';
-  const label = app === 'admin' ? BRAND.adminTitle : BRAND.webTitle;
+  const accent = '#0f766e';
+  const label = BRAND.webTitle;
 
   return (
     <span className={className}>

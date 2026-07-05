@@ -1,4 +1,4 @@
-import { type Locale, isLocale } from '@tanlabs/platform';
+import { type Locale, isLocale } from '@/lib/platform';
 
 export function LocaleFlagAsset({ locale }: { locale: Locale }) {
   if (locale === 'vi') {

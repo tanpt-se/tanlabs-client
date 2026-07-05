@@ -1,18 +1,10 @@
 export {
-  ADMIN_ROLE,
   DEFAULT_CLIENT_ROLE,
-  SUPER_ADMIN_ROLE,
-  adminPermissionCatalog,
-  adminPermissionKeys,
   clientPermissionCatalog,
   clientPermissionKeys,
-  hasAnyPermission,
   hasPermission,
-  isAdminAudience,
   isClientAudience,
-  isSuperAdmin,
-  sharedPermissionCatalog,
-  type SharedPermissionKey,
+  type ClientPermissionKey,
 } from './access';
 export interface ErrorEnvelope {
   error: {

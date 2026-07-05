@@ -1,13 +1,7 @@
 import { BRAND } from '@tanlabs/config';
 
-export function BrandIconSvg({
-  app,
-  size = 32,
-}: {
-  app: 'web' | 'admin' | 'mobile';
-  size?: number;
-}) {
-  const accent = app === 'admin' ? '#f97316' : '#171717';
+export function BrandIconSvg({ size = 32 }: { size?: number }) {
+  const accent = '#171717';
   const label = BRAND.shortName.slice(0, 2);
 
   return (

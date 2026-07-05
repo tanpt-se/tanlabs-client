@@ -1,3 +1,6 @@
+export type ShellBaseText = Record<string, unknown>;
+export type PublicInfoPanelText = Record<string, unknown>;
+
 export type DeepWiden<T> = T extends string
   ? string
   : T extends readonly (infer U)[]

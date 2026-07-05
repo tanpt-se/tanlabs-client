@@ -2,9 +2,9 @@
 
 import type { ReactNode } from 'react';
 
-import type { Locale, ThemeMode } from '@tanlabs/platform';
+import type { Locale, ThemeMode } from '@/lib/platform';
 import { AppProviders as SharedAppProviders } from '@tanlabs/providers';
-import { Toaster } from '@tanlabs/components';
+import { ToastProvider } from '@tanlabs/astryx';
 
 import { CLIENT_LOCALE_COOKIE, CLIENT_THEME_COOKIE } from '@/auth-config';
 import { PublicAuthRuntimeRoot } from './public-auth-runtime-root';
@@ -27,7 +27,7 @@ export function AppProviders({
       preservePathOnLocaleChange
     >
       <PublicAuthRuntimeRoot />
-      <Toaster />
+      <ToastProvider />
       {children}
     </SharedAppProviders>
   );

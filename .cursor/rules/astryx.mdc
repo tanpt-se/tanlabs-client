@@ -1,0 +1,83 @@
+---
+description: Astryx design system — CLI workflow, conventions, and MCP for AI-generated UI
+globs: src/**/*.{tsx,css}
+alwaysApply: false
+---
+
+# Astryx (Working with AI)
+
+Ref: [Working with AI](https://astryx.atmeta.com/docs/working-with-ai)
+
+## Before writing Astryx UI
+
+If you cannot answer all three without guessing, run the CLI first — do not invent props or import paths:
+
+1. What is the correct import path for `Button`?
+2. How do you make a `Dialog` non-dismissible?
+3. What prop does `Selector` use for its items?
+
+## CLI invocation (required)
+
+Never call `node_modules/@astryxdesign/cli/bin/*.mjs` directly. Use the npm script alias:
+
+```bash
+pnpm exec astryx <cmd>
+# examples:
+pnpm exec astryx component Dialog --dense
+pnpm exec astryx docs tokens --dense
+pnpm exec astryx build "settings page"
+```
+
+Use `--dense` when pasting CLI output into context. After `@astryxdesign/core` bumps, re-run `pnpm exec astryx init --features agents` and `pnpm exec astryx upgrade --apply`.
+
+## MCP
+
+This project configures the Astryx MCP server in `.cursor/mcp.json`. Prefer `search` / `get` over guessing when the server is available.
+
+## Project note
+
+All UI uses Astryx (`@astryxdesign/core`). Templates live under `src/react-app/ui/`. Follow `.cursor/rules/features-structure.mdc` for folder placement. Do not add Radix/shadcn components — use `pnpm exec astryx component <Name>` to discover APIs.
+
+## Page titles: breadcrumbs only
+
+The dashboard shell (`ShellSideNavLayout`) already renders the page title + description via `AppBreadcrumbs`. Pages inside the shell must NOT render their own page-level heading — no `<Heading level={1}>` / `LayoutHeader` duplicating the breadcrumb label.
+
+```tsx
+// ❌ BAD — "Settings" appears twice (breadcrumb + page header)
+<Layout header={<LayoutHeader><Heading level={1}>{lang.title}</Heading></LayoutHeader>} … />
+
+// ✅ GOOD — no page header; breadcrumbs own the title
+<Layout start={…} content={…} />
+```
+
+Section headings inside the page body (`Heading level={3}` in a settings panel, card titles) are fine — only the top-level page title is owned by breadcrumbs. When adding a new page, register its title/description in `resolveDashboardHeaderText` (`shared/i18n`) instead of rendering text in the page.
+
+<!-- ASTRYX:START -->
+Astryx v0.1.3 · 149 components
+CLI: run every command as `pnpm exec astryx <cmd>` (shown below as `astryx ...`).
+
+SETUP (once, in your app entry e.g. main.tsx) — without these, components render unstyled:
+  import "@astryxdesign/core/reset.css";
+  import "@astryxdesign/core/astryx.css";
+
+WORKFLOW — discover, don't guess. Before writing UI:
+1. `astryx build "<idea>"` — START HERE: returns a kit (closest [page] + [block]s + [component]s). No args = full playbook.
+2. `astryx template <name> [--skeleton]` — scaffold the [page]/[block]s it named, or study their layout. Templates are reference code.
+3. `astryx component <Name>` — props + examples for every component you use.
+
+RULES:
+- No <div> — components do all layout/spacing. Full page → AppShell; sidebar nav → SideNav.
+- Frame first: pick the shell (AppShell / Layout+LayoutPanel) and budget regions in px BEFORE writing content (`astryx docs layout`).
+- Dense data = rows (Table, List/Item) edge-to-edge — never Card-wrapped list items. Card = dashboard widgets, galleries, settings groups only.
+- Status → StatusDot/Token; Badge only for counts and enumerated states, never decoration.
+- Custom styling: component props first; else Tailwind utilities backed by tokens (bg-surface, text-primary, rounded-lg) via tailwind-theme.css. No raw hex/px.
+- Tokens for every value (`astryx docs tokens`). Brand/accent via `astryx theme` — never override --color-* in :root.
+
+MORE CLI:
+  search "<query>"   find any component / hook / doc / template / block
+  component --list   149 components by category
+  template --list    page + block recipes
+  docs <topic>       color, elevation, icons, illustrations, layout, migration, motion, principles, shape, spacing, styling, theme, tokens, typography
+  swizzle <Name>     eject component source for deep customization
+  upgrade --apply    run after any @astryxdesign/core bump
+<!-- ASTRYX:END -->

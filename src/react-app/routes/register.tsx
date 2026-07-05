@@ -34,7 +34,7 @@ export function RegisterPage() {
             : undefined;
 
   return (
-    <AuthLayout app="web">
+    <AuthLayout>
       <RegisterForm
         key={locale}
         title={lang.register.formTitle}

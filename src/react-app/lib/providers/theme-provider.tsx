@@ -1,7 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
+import { Theme } from '@astryxdesign/core';
+import { LinkProvider } from '@astryxdesign/core/Link';
+import { neutralTheme } from '@astryxdesign/theme-neutral/built';
 
 import {
   type Locale,
@@ -13,7 +17,7 @@ import {
   resolveThemeValue,
   setClientCookie,
   themeCookieName,
-} from '@tanlabs/platform';
+} from '@/lib/platform';
 
 const LOCALES = ['en', 'vi', 'ja', 'ko'] as const;
 
@@ -26,13 +30,7 @@ function getSystemTheme(): ResolvedThemeMode {
 }
 
 function applyTheme(themeMode: ThemeMode): ResolvedThemeMode {
-  const resolvedTheme = resolveThemeValue(themeMode, getSystemTheme());
-
-  if (typeof document !== 'undefined') {
-    document.documentElement.dataset.theme = resolvedTheme;
-  }
-
-  return resolvedTheme;
+  return resolveThemeValue(themeMode, getSystemTheme());
 }
 
 type LocaleContextValue = {
@@ -56,6 +54,18 @@ const ThemeContext = React.createContext<ThemeContextValue>({
   themeMode: 'system',
   setTheme: () => undefined,
 });
+
+const AstryxRouterLink = function AstryxRouterLink({
+  href,
+  children,
+  ...props
+}: React.ComponentProps<'a'> & { href?: string }) {
+  return (
+    <RouterLink to={href ?? '/'} {...props}>
+      {children}
+    </RouterLink>
+  );
+};
 
 export function AppProviders({
   children,
@@ -167,9 +177,13 @@ export function AppProviders({
   );
 
   return (
-    <LocaleContext.Provider value={localeValue}>
-      <ThemeContext.Provider value={themeValue}>{children}</ThemeContext.Provider>
-    </LocaleContext.Provider>
+    <Theme theme={neutralTheme} mode={themeMode}>
+      <LinkProvider component={AstryxRouterLink}>
+        <LocaleContext.Provider value={localeValue}>
+          <ThemeContext.Provider value={themeValue}>{children}</ThemeContext.Provider>
+        </LocaleContext.Provider>
+      </LinkProvider>
+    </Theme>
   );
 }
 

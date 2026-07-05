@@ -10,12 +10,8 @@ export function ForgotPasswordPage() {
   const lang = getClientLang(locale);
 
   return (
-    <AuthLayout app="web">
-      <ForgotPasswordForm
-        app="web"
-        backToLoginHref={CLIENT_PUBLIC_ROUTES.login}
-        lang={lang.forgotPassword}
-      />
+    <AuthLayout>
+      <ForgotPasswordForm backToLoginHref={CLIENT_PUBLIC_ROUTES.login} lang={lang.forgotPassword} />
     </AuthLayout>
   );
 }

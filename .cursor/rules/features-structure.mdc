@@ -1,0 +1,86 @@
+---
+description: Folder layout — feature-first under src/react-app/features/
+alwaysApply: true
+---
+
+# Feature-first folder structure
+
+All new React app code lives under `src/react-app/` using **features**, not scattered `client/`, `lib/auth`, or root-level UI folders.
+
+## Target tree
+
+```
+src/react-app/
+  app/                          # Bootstrap only: router, providers, route-guards
+  routes/                       # Thin route files — wire locale/params, render feature pages
+  features/
+    <feature>/                  # auth | dashboard | account | …
+      components/               # UI owned by this feature
+      hooks/
+      services/                 # client-side orchestration
+      requests/                 # API calls
+      schemas/                  # zod / validation
+      lib/                      # helpers private to this feature
+      index.ts                  # public exports — other code imports from here
+  shared/                       # Cross-feature: http, i18n, routing, query, auth session
+  ui/                           # App-wide shells & Astryx templates (layout, login-card, settings)
+  lib/                          # Non-UI infra only: assets, config, contracts, platform, providers, types
+    astryx/                     # Thin Astryx adapters (toast, breadcrumbs, form-dialog)
+```
+
+Worker code stays in `src/worker/` (not under `features/`).
+
+## Placement rules
+
+| What | Where | Not here |
+|------|--------|----------|
+| Login form, register, 2FA UI | `features/auth/` | `lib/auth/`, `lib/common/` |
+| Dashboard, settings page, charts | `features/dashboard/` | `lib/ui/` (except layout shell) |
+| Account API + hooks | `features/account/` | mixed into dashboard without reason |
+| Astryx template scaffold | `ui/<template>/` | repo root, `login-card/` at react-app root |
+| Layout shell (side nav) | `ui/shell-side-nav/` | `features/dashboard/components/` |
+| Toast, AppBreadcrumbs | `lib/astryx/` | feature folders |
+| HTTP client, i18n messages | `shared/` | inside a single feature |
+| Env, cookies, route guards | `lib/platform/` (cookies, HTTP) + `shared/routing/guards` + `app/` | feature components |
+
+## File rules
+
+1. **One feature = one folder** under `features/<name>/`. No top-level `components/` dump.
+2. **`routes/` stays thin** — no business logic; import from `features/<name>`.
+3. **Cross-feature imports** — only from `features/<other>/index.ts`, never deep paths into another feature.
+4. **No duplicate modules** — one canonical path (e.g. one login-card under `ui/login-card/`).
+5. **Do not add** to legacy paths: `client/features/`, `lib/components/`, `lib/common/`, `lib/auth/` (migrate when editing those files).
+6. **New Astryx template** — `pnpm exec astryx template <name> ./src/react-app/ui/<name> -f`; production code in same folder, exclude `page.tsx` from tsconfig if reference-only.
+
+## Imports (current → target)
+
+```tsx
+// ✅ Feature-internal
+import { LoginForm } from '@/features/auth/components/login-form';
+
+// ✅ Other feature — public API
+import { DashboardShell } from '@/features/dashboard';
+
+// ✅ Shared / infra
+import { api } from '@/shared/http/client';
+import { ToastProvider } from '@tanlabs/astryx';
+
+// ❌ Deep cross-feature
+import { useRegisterForm } from '@/features/auth/hooks/use-register-form'; // from dashboard
+
+// ❌ Legacy / duplicate roots
+import { AuthLayout } from '@/features/auth'; // use public API from index.ts
+```
+
+`@/` → `src/react-app`. Prefer `@/features/*`, `@/shared/*`, `@/ui/*` over `@tanlabs/ui/*`.
+
+## Adding a feature
+
+```
+features/billing/
+  components/billing-page.tsx
+  hooks/use-billing.ts
+  requests/billing.requests.ts
+  index.ts          # export { BillingPage } from './components/billing-page'
+routes/billing.tsx  # <BillingPage lang={...} />
+```

@@ -1,10 +1,10 @@
 'use client';
 
-import { createPublicAuthRequests } from '@tanlabs/web-common/auth/public-auth-requests';
+import { createPublicAuthRequests } from '@/features/auth/lib/public-auth-requests';
 
 import { CLIENT_LOGIN_RATE_LIMIT_COOKIE, CLIENT_PUBLIC_ROUTES } from '@/auth-config';
-import { getClientConfig } from '@/config/env';
-import { CLIENT_API_ROUTES } from '@/shared/api';
+import { getClientConfig } from '@/shared/config/env';
+import { CLIENT_API_ROUTES } from '@/shared/http';
 import { clearSession, saveSession } from '@/shared/auth';
 import { configurePublicAuthRuntime } from '@/shared/auth/public-auth-runtime';
 import { api } from '@/shared/http/client';

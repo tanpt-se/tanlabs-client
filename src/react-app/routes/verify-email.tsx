@@ -21,7 +21,7 @@ export function VerifyEmailPage() {
   }
 
   return (
-    <AuthLayout app="web">
+    <AuthLayout>
       <VerifyEmailForm
         key={locale}
         title={lang.verifyEmail.formTitle}

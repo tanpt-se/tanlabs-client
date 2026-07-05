@@ -19,69 +19,19 @@
 		"noUncheckedSideEffectImports": true,
 		"baseUrl": ".",
 		"paths": {
-			"@/auth-config": ["src/react-app/client/auth-config.ts"],
-			"@/auth-config.client": ["src/react-app/client/auth-config.client.ts"],
-			"@/*": ["src/react-app/client/*"],
+			"@/auth-config": ["src/react-app/shared/auth-config.ts"],
+			"@/auth-config.client": ["src/react-app/shared/auth-config.client.ts"],
+			"@/*": ["src/react-app/*"],
 			"@tanlabs/assets": ["src/react-app/lib/assets/index.ts"],
-			"@tanlabs/components/shared-login-form": [
-				"src/react-app/lib/components/shared-login-form.tsx"
-			],
-			"@tanlabs/components": ["src/react-app/lib/components/index.ts"],
+			"@tanlabs/astryx": ["src/react-app/lib/astryx/index.ts"],
+			"@tanlabs/ui/login-card": ["src/react-app/ui/login-card/index.ts"],
+			"@tanlabs/ui/settings": ["src/react-app/ui/settings/index.ts"],
+			"@tanlabs/ui/shell-side-nav": ["src/react-app/ui/shell-side-nav/index.ts"],
 			"@tanlabs/config": ["src/react-app/lib/config/index.ts"],
 			"@tanlabs/contracts": ["src/react-app/lib/contracts/index.ts"],
-			"@tanlabs/platform/runtime-http": [
-				"src/react-app/lib/platform/runtime/http-server.ts"
-			],
-			"@tanlabs/platform/runtime": ["src/react-app/lib/platform/runtime/server/index.ts"],
 			"@tanlabs/platform": ["src/react-app/lib/platform/index.ts"],
 			"@tanlabs/providers": ["src/react-app/lib/providers/index.ts"],
-			"@tanlabs/types": ["src/react-app/lib/types/index.ts"],
-			"@tanlabs/web-common/*": ["src/react-app/lib/common/*"],
-			"@tanlabs/web-common/auth/auth-layout": [
-				"src/react-app/lib/common/auth/auth-layout.tsx"
-			],
-			"@tanlabs/web-common/auth/forgot-password-form": [
-				"src/react-app/lib/common/auth/forgot-password-form.tsx"
-			],
-			"@tanlabs/web-common/auth/password-recovery-errors": [
-				"src/react-app/lib/common/auth/password-recovery-errors.ts"
-			],
-			"@tanlabs/web-common/auth/password-recovery.schema": [
-				"src/react-app/lib/common/auth/password-recovery.schema.ts"
-			],
-			"@tanlabs/web-common/auth/public-auth-screens": [
-				"src/react-app/lib/common/auth/public-auth-screens.ts"
-			],
-			"@tanlabs/web-common/auth/runtime-access": [
-				"src/react-app/lib/common/auth/runtime-access.ts"
-			],
-			"@tanlabs/web-common/auth/social-auth": [
-				"src/react-app/lib/common/auth/social-auth.ts"
-			],
-			"@tanlabs/web-common/i18n/locale-options": [
-				"src/react-app/lib/common/i18n/locale-options.ts"
-			],
-			"@tanlabs/web-common/i18n/shell-base-en": [
-				"src/react-app/lib/common/i18n/shell-base-en.ts"
-			],
-			"@tanlabs/web-common/auth/components/session-watchdog": [
-				"src/react-app/lib/common/auth/components/session-watchdog.tsx"
-			],
-			"@tanlabs/web-common/auth/components/middleware-fallback": [
-				"src/react-app/lib/common/auth/components/middleware-fallback.tsx"
-			],
-			"@tanlabs/web-common/auth/public-auth-runtime": [
-				"src/react-app/lib/common/auth/public-auth-runtime.ts"
-			],
-			"@tanlabs/web-common/auth/public-auth-requests": [
-				"src/react-app/lib/common/auth/public-auth-requests.ts"
-			],
-			"@tanlabs/web-common/auth/auth-app-config": [
-				"src/react-app/lib/common/auth/auth-app-config.ts"
-			],
-			"@tanlabs/web-common/auth/use-forgot-password-form": [
-				"src/react-app/lib/common/auth/use-forgot-password-form.ts"
-			]
+			"@tanlabs/types": ["src/react-app/lib/types/index.ts"]
 		}
 	},
 	"include": ["src/react-app"]

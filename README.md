@@ -44,6 +44,32 @@ npm run dev                      # http://localhost:5101
 
 Production Worker vars are in `wrangler.json` → `env.production.vars.API_ORIGIN`.
 
+## Project layout
+
+```
+src/
+  worker/                 Cloudflare Worker (API proxy)
+  react-app/
+    app/                  Router, providers, root layout
+    routes/               Route modules
+    features/             Feature modules (auth, dashboard, account, …)
+    shared/               HTTP, i18n, auth session, routing, config
+    ui/                   Astryx templates (login-card, shell-side-nav, settings)
+    lib/
+      astryx/             Thin adapters (toast, dialogs, preferences, breadcrumbs)
+      assets/             Brand, illustrations, backgrounds
+      config/             Env and brand config
+      platform/           Browser cookies, HTTP client, locale/theme prefs (3 modules)
+      providers/          Theme, locale, layout shells
+      types/              Shared TS types
+```
+
+The `@/` alias maps to `src/react-app/` (e.g. `@/features/auth`, `@/shared/http/client`, `@/ui/login-card`).
+
+### Astryx CSS
+
+Global styles live in `src/react-app/index.css` (Astryx reset + theme-neutral + tailwind bridge). The app root wraps content in `<Theme theme={neutralTheme}>` via `lib/providers/theme-provider.tsx`.
+
 ## Auth routes
 
 | Path | Description |
@@ -52,7 +78,7 @@ Production Worker vars are in `wrangler.json` → `env.production.vars.API_ORIGI
 | `/register` | Sign up + email verification flow |
 | `/verify-email` | OTP verification after register |
 | `/forgot-password` | Password recovery |
-| `/my-account` | 2FA, Google link, session revoke |
+| `/settings` | Account profile, 2FA, Google link, session revoke |
 | `/auth/session-ended` | Session terminated notice |
 
 ## i18n

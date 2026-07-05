@@ -11,7 +11,7 @@ import { ForgotPasswordPage } from '../routes/forgot-password';
 import { SessionEndedPage } from '../routes/session-ended';
 import { DashboardLayout } from '../routes/dashboard/layout';
 import { DashboardPage } from '../routes/dashboard/index';
-import { MyAccountRoute } from '../routes/dashboard/my-account';
+import { MyAccountRedirectRoute, SettingsRoute } from '../routes/dashboard/settings';
 
 export const router = createBrowserRouter([
   {
@@ -49,7 +49,8 @@ export const router = createBrowserRouter([
             element: <DashboardLayout />,
             children: [
               { index: true, element: <DashboardPage /> },
-              { path: 'my-account', element: <MyAccountRoute /> },
+              { path: 'settings', element: <SettingsRoute /> },
+              { path: 'my-account', element: <MyAccountRedirectRoute /> },
             ],
           },
         ],
