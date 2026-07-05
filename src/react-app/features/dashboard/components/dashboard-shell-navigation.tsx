@@ -12,11 +12,19 @@ function navIcon(IconComponent: IconType) {
   return <Icon icon={IconComponent} size="sm" />;
 }
 
+function isSettingsPath(pathname: string) {
+  return (
+    pathname === CLIENT_AUTH_ROUTES.settings ||
+    pathname.startsWith('/settings/')
+  );
+}
+
 export function buildDashboardShellNavigation(params: {
   pathname: string;
   shell: ClientLang['shell'];
 }): ShellSideNavGroup[] {
   const { pathname, shell } = params;
+  const settingsMenu = shell.nav.settingsMenu;
 
   return [
     {
@@ -30,10 +38,29 @@ export function buildDashboardShellNavigation(params: {
         },
         {
           key: 'settings',
-          href: CLIENT_AUTH_ROUTES.settings,
           label: shell.nav.settings,
           icon: navIcon(Cog6ToothIcon),
-          isSelected: pathname === CLIENT_AUTH_ROUTES.settings,
+          collapsible: { defaultIsCollapsed: !isSettingsPath(pathname) },
+          children: [
+            {
+              key: 'settings-account',
+              href: CLIENT_AUTH_ROUTES.settingsAccount,
+              label: settingsMenu.account,
+              isSelected: pathname === CLIENT_AUTH_ROUTES.settingsAccount,
+            },
+            {
+              key: 'settings-general',
+              href: CLIENT_AUTH_ROUTES.settingsGeneral,
+              label: settingsMenu.general,
+              isSelected: pathname === CLIENT_AUTH_ROUTES.settingsGeneral,
+            },
+            {
+              key: 'settings-billing',
+              href: CLIENT_AUTH_ROUTES.settingsBilling,
+              label: settingsMenu.billing,
+              isSelected: pathname === CLIENT_AUTH_ROUTES.settingsBilling,
+            },
+          ],
         },
       ],
     },

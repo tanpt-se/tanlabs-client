@@ -1,3 +1,4 @@
+import type { ComponentType } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { CLIENT_AUTH_ROUTES, CLIENT_PUBLIC_ROUTES, SESSION_TERMINATED_ROUTE } from '@/shared/routing';
@@ -10,8 +11,17 @@ import { VerifyEmailPage } from '../routes/verify-email';
 import { ForgotPasswordPage } from '../routes/forgot-password';
 import { SessionEndedPage } from '../routes/session-ended';
 import { DashboardLayout } from '../routes/dashboard/layout';
-import { DashboardPage } from '../routes/dashboard/index';
-import { MyAccountRedirectRoute, SettingsRoute } from '../routes/dashboard/settings';
+import { RouteErrorPage } from '@/ui/loading';
+import { MyAccountRedirectRoute, SettingsRedirectRoute } from '../routes/dashboard/settings';
+
+function lazyPage<T extends Record<string, ComponentType>>(loader: () => Promise<T>, exportName: keyof T) {
+  return {
+    lazy: async () => {
+      const module = await loader();
+      return { Component: module[exportName] };
+    },
+  };
+}
 
 export const router = createBrowserRouter([
   {
@@ -44,20 +54,22 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <ProtectedRoute />,
+        errorElement: <RouteErrorPage />,
         children: [
           {
             element: <DashboardLayout />,
+            errorElement: <RouteErrorPage />,
             children: [
-              { index: true, element: <DashboardPage /> },
-              { path: 'settings', element: <SettingsRoute /> },
+              { index: true, ...lazyPage(() => import('../routes/dashboard/index'), 'DashboardPage') },
+              { path: 'settings', element: <SettingsRedirectRoute /> },
+              { path: 'settings/account', ...lazyPage(() => import('../routes/dashboard/settings'), 'SettingsAccountRoute') },
+              { path: 'settings/general', ...lazyPage(() => import('../routes/dashboard/settings'), 'SettingsGeneralRoute') },
+              { path: 'settings/billing', ...lazyPage(() => import('../routes/dashboard/settings'), 'SettingsBillingRoute') },
               { path: 'my-account', element: <MyAccountRedirectRoute /> },
+              { path: '*', element: <Navigate to={CLIENT_AUTH_ROUTES.dashboard} replace /> },
             ],
           },
         ],
-      },
-      {
-        path: '*',
-        element: <Navigate to={CLIENT_AUTH_ROUTES.dashboard} replace />,
       },
     ],
   },

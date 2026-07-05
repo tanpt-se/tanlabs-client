@@ -73,16 +73,22 @@ export function SettingsSectionPanel({
   title,
 }: {
   children: ReactNode;
-  description: string;
-  title: string;
+  description?: string;
+  title?: string;
 }) {
+  if (!title) {
+    return <VStack gap={4}>{children}</VStack>;
+  }
+
   return (
     <Grid columns={{ minWidth: 320 }} gap={10}>
       <VStack gap={1}>
         <Heading level={3}>{title}</Heading>
-        <Text type="supporting" color="secondary">
-          {description}
-        </Text>
+        {description ? (
+          <Text type="supporting" color="secondary">
+            {description}
+          </Text>
+        ) : null}
       </VStack>
       <VStack gap={4}>{children}</VStack>
     </Grid>

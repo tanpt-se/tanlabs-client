@@ -1,7 +1,9 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { clientAuthConfig } from '@/auth-config';
+import { AuthBootstrapFallback } from '@/ui/loading';
 import { hasAuthCookie, getToken } from '@/shared/auth';
+import { isAccessTokenValid } from '@/shared/auth/access-token';
 import { refreshSession } from '@/shared/http/client';
 import {
   CLIENT_PUBLIC_ROUTES,
@@ -28,7 +30,8 @@ export function ProtectedRoute() {
     let active = true;
 
     const bootstrap = async () => {
-      if (getToken()) {
+      const token = getToken();
+      if (token && isAccessTokenValid(token)) {
         if (active) {
           setAllowed(true);
           setReady(true);
@@ -67,7 +70,7 @@ export function ProtectedRoute() {
   }, []);
 
   if (!ready) {
-    return null;
+    return <AuthBootstrapFallback />;
   }
 
   if (!allowed) {
@@ -91,7 +94,8 @@ export function PublicRoute() {
       const nextParam = new URLSearchParams(location.search).get(LOGIN_NEXT_QUERY_PARAM);
       const destination = resolveAuthenticatedRedirect(nextParam ?? undefined);
 
-      if (getToken()) {
+      const token = getToken();
+      if (token && isAccessTokenValid(token)) {
         if (active) {
           setRedirectTo(destination);
           setReady(true);
@@ -126,7 +130,7 @@ export function PublicRoute() {
   }, [location.search]);
 
   if (!ready) {
-    return null;
+    return <AuthBootstrapFallback />;
   }
 
   if (redirectTo) {

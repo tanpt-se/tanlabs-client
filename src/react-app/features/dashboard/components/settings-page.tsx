@@ -1,24 +1,27 @@
 'use client';
 
 import type { ReactNode } from 'react';
-import { useMemo, useState } from 'react';
 
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
+import { EmptyState } from '@astryxdesign/core/EmptyState';
+import { MoreMenu } from '@astryxdesign/core/MoreMenu';
 import { HStack, VStack } from '@astryxdesign/core/Stack';
 import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { FormDialog } from '@tanlabs/astryx';
-import { SettingsLayout, SettingsSectionPanel } from '@/ui/settings';
+import { SettingsSectionPanel } from '@/ui/settings';
 import { QRCodeSVG } from 'qrcode.react';
+import { useLocale, useTheme } from '@tanlabs/providers';
 
 import { useClientMyAccount } from '@/features/account/hooks/use-client-my-account';
 import { getClientConfig } from '@/shared/config/env';
+import { LOCALE_OPTIONS } from '@/shared/i18n/locale-options';
 import type { ClientLang } from '@/shared/i18n';
 
-type SettingsPanelId = 'account' | 'security' | 'controls';
+export type SettingsSectionId = 'account' | 'general' | 'billing';
 
 function SettingsRow({
   title,
@@ -42,23 +45,33 @@ function SettingsRow({
   );
 }
 
+function SettingsGroupHeading({ label }: { label: string }) {
+  return (
+    <Text type="label" color="secondary">
+      {label}
+    </Text>
+  );
+}
+
 export function SettingsPage({
+  section,
   lang,
+  shell,
   initialUser,
+  onLogout,
 }: {
+  section: SettingsSectionId;
   lang: ClientLang['myAccount'];
+  shell: ClientLang['shell'];
   initialUser: { id?: string } | null;
+  onLogout: () => void | Promise<void>;
 }) {
   const googleEnabled = getClientConfig().oauth.googleEnabled;
-  const [activeSection, setActiveSection] = useState<SettingsPanelId>('account');
-  const sections = useMemo(
-    () => [
-      { id: 'account' as const, label: lang.sections.accountTitle },
-      { id: 'security' as const, label: lang.sections.securityTitle },
-      { id: 'controls' as const, label: lang.sections.controlsTitle },
-    ],
-    [lang.sections.accountTitle, lang.sections.controlsTitle, lang.sections.securityTitle],
-  );
+  const { locale, setLocale } = useLocale();
+  const { theme, setTheme } = useTheme();
+  const currentLocaleLabel =
+    LOCALE_OPTIONS.find((option) => option.value === locale)?.label ?? LOCALE_OPTIONS[0].label;
+  const currentThemeLabel = shell.themeOptions[theme] ?? shell.themeOptions.system;
 
   const {
     accountEmail,
@@ -117,141 +130,164 @@ export function SettingsPage({
 
   return (
     <>
-      <SettingsLayout
-        sections={sections}
-        activeSection={activeSection}
-        onSectionChange={(sectionId) => setActiveSection(sectionId as SettingsPanelId)}
-      >
-        {activeSection === 'account' ? (
-          <SettingsSectionPanel
-            title={lang.sections.accountTitle}
-            description={lang.sections.accountDescription}
-          >
-            <HStack gap={4} vAlign="start">
-              <Avatar name={accountEmail} size="large" alt={accountEmail} />
-              <VStack gap={2}>
-                <HStack gap={2}>
-                  <Button label={lang.account.changeImage} variant="primary" size="sm" />
-                  <Button label={lang.account.removeImage} variant="secondary" size="sm" />
-                </HStack>
-                <Text type="supporting" color="secondary">
-                  {lang.account.imageHint}
-                </Text>
-              </VStack>
-            </HStack>
-            <TextInput
-              label={lang.account.nameLabel}
-              value={fullName || lang.account.fallbackName}
-              onChange={() => undefined}
-              isDisabled
-            />
-            <TextInput
-              label={lang.account.roleLabel}
-              value={accountRole}
-              onChange={() => undefined}
-              isDisabled
-            />
-            <TextInput
-              label={lang.account.emailLabel}
-              type="email"
-              value={accountEmail}
-              onChange={() => undefined}
-              isDisabled
-            />
-          </SettingsSectionPanel>
-        ) : null}
+      {section === 'account' ? (
+        <SettingsSectionPanel>
+          <HStack gap={4} vAlign="start">
+            <Avatar name={accountEmail} size="large" alt={accountEmail} />
+            <VStack gap={2}>
+              <HStack gap={2}>
+                <Button label={lang.account.changeImage} variant="primary" size="sm" />
+                <Button label={lang.account.removeImage} variant="secondary" size="sm" />
+              </HStack>
+              <Text type="supporting" color="secondary">
+                {lang.account.imageHint}
+              </Text>
+            </VStack>
+          </HStack>
+          <TextInput
+            label={lang.account.nameLabel}
+            value={fullName || lang.account.fallbackName}
+            onChange={() => undefined}
+            isDisabled
+          />
+          <TextInput
+            label={lang.account.roleLabel}
+            value={accountRole}
+            onChange={() => undefined}
+            isDisabled
+          />
+          <TextInput
+            label={lang.account.emailLabel}
+            type="email"
+            value={accountEmail}
+            onChange={() => undefined}
+            isDisabled
+          />
 
-        {activeSection === 'security' ? (
-          <SettingsSectionPanel
-            title={lang.sections.securityTitle}
-            description={lang.sections.securityDescription}
-          >
-            <Switch
-              label={lang.google.title}
-              description={
-                linkedGoogleEmail
-                  ? lang.google.connected.replace('{email}', linkedGoogleEmail)
-                  : lang.google.description
+          <SettingsGroupHeading label={lang.sections.securityTitle} />
+          <Switch
+            label={lang.google.title}
+            description={
+              linkedGoogleEmail
+                ? lang.google.connected.replace('{email}', linkedGoogleEmail)
+                : lang.google.description
+            }
+            value={Boolean(linkedGoogleEmail)}
+            isDisabled={!googleEnabled || linkingGoogle}
+            onChange={handleGoogleToggle}
+            labelSpacing="spread"
+            labelPosition="start"
+            width="100%"
+          />
+          <Switch
+            label={lang.twoFactor.title}
+            description={lang.twoFactor.description}
+            value={twoFactorStatus.enabled}
+            onChange={(checked) => {
+              if (checked) {
+                openTwoFactor();
+                return;
               }
-              value={Boolean(linkedGoogleEmail)}
-              isDisabled={!googleEnabled || linkingGoogle}
-              onChange={handleGoogleToggle}
-              labelSpacing="spread"
-              labelPosition="start"
-              width="100%"
-            />
-            <Switch
-              label={lang.twoFactor.title}
-              description={lang.twoFactor.description}
-              value={twoFactorStatus.enabled}
-              onChange={(checked) => {
-                if (checked) {
-                  openTwoFactor();
-                  return;
-                }
-                openDisableTwoFactorModal();
-              }}
-              labelSpacing="spread"
-              labelPosition="start"
-              width="100%"
-            />
-            <SettingsRow
-              title={lang.password.title}
-              description={lang.password.description}
-              action={
-                <Button
-                  label={lang.password.changeAction}
-                  variant="secondary"
-                  onClick={() => setShowChangePasswordModal(true)}
-                />
-              }
-            />
-          </SettingsSectionPanel>
-        ) : null}
+              openDisableTwoFactorModal();
+            }}
+            labelSpacing="spread"
+            labelPosition="start"
+            width="100%"
+          />
+          <SettingsRow
+            title={lang.password.title}
+            description={lang.password.description}
+            action={
+              <Button
+                label={lang.password.changeAction}
+                variant="secondary"
+                onClick={() => setShowChangePasswordModal(true)}
+              />
+            }
+          />
 
-        {activeSection === 'controls' ? (
-          <SettingsSectionPanel
-            title={lang.sections.controlsTitle}
-            description={lang.sections.controlsDescription}
-          >
-            <Switch
-              label={lang.controls.supportAccessTitle}
-              description={lang.controls.supportAccessDescription}
-              value={false}
-              isDisabled
-              labelSpacing="spread"
-              labelPosition="start"
-              width="100%"
-            />
-            <SettingsRow
-              title={lang.controls.logoutAllDevicesTitle}
-              description={lang.controls.logoutAllDevicesDescription}
-              action={
-                <Button
-                  label={
-                    loggingOutDevices ? lang.controls.logoutLoading : lang.controls.logoutAction
-                  }
-                  variant="secondary"
-                  isDisabled={loggingOutDevices}
-                  isLoading={loggingOutDevices}
-                  clickAction={() => logoutAllOtherDevices()}
-                />
-              }
-            />
-            <SettingsRow
-              title={lang.controls.deleteAccountTitle}
-              description={lang.controls.deleteAccountDescription}
-              action={
-                <Button
-                  label={lang.controls.deleteAccountAction}
-                  variant="destructive"
-                  isDisabled
-                />
-              }
-            />
-          </SettingsSectionPanel>
-        ) : null}
-      </SettingsLayout>
+          <SettingsGroupHeading label={lang.sections.controlsTitle} />
+          <SettingsRow
+            title={lang.controls.logoutAllDevicesTitle}
+            description={lang.controls.logoutAllDevicesDescription}
+            action={
+              <Button
+                label={loggingOutDevices ? lang.controls.logoutLoading : lang.controls.logoutAction}
+                variant="secondary"
+                isDisabled={loggingOutDevices}
+                isLoading={loggingOutDevices}
+                clickAction={() => logoutAllOtherDevices()}
+              />
+            }
+          />
+          <SettingsRow
+            title={lang.controls.deleteAccountTitle}
+            description={lang.controls.deleteAccountDescription}
+            action={
+              <Button label={lang.controls.deleteAccountAction} variant="destructive" isDisabled />
+            }
+          />
+        </SettingsSectionPanel>
+      ) : null}
+
+      {section === 'general' ? (
+        <SettingsSectionPanel>
+          <SettingsRow
+            title={lang.preferences.languageTitle}
+            description={lang.preferences.languageDescription}
+            action={
+              <MoreMenu
+                size="sm"
+                label={currentLocaleLabel}
+                items={LOCALE_OPTIONS.map((option) => ({
+                  label: option.label,
+                  onClick: () => setLocale(option.value),
+                }))}
+              />
+            }
+          />
+          <SettingsRow
+            title={lang.preferences.themeTitle}
+            description={lang.preferences.themeDescription}
+            action={
+              <MoreMenu
+                size="sm"
+                label={currentThemeLabel}
+                items={[
+                  { label: shell.themeOptions.light, onClick: () => setTheme('light') },
+                  { label: shell.themeOptions.dark, onClick: () => setTheme('dark') },
+                  { label: shell.themeOptions.system, onClick: () => setTheme('system') },
+                ]}
+              />
+            }
+          />
+          <Switch
+            label={lang.controls.supportAccessTitle}
+            description={lang.controls.supportAccessDescription}
+            value={false}
+            isDisabled
+            labelSpacing="spread"
+            labelPosition="start"
+            width="100%"
+          />
+          <SettingsRow
+            title={lang.preferences.logoutTitle}
+            description={lang.preferences.logoutDescription}
+            action={
+              <Button label={shell.logout} variant="secondary" clickAction={() => void onLogout()} />
+            }
+          />
+        </SettingsSectionPanel>
+      ) : null}
+
+      {section === 'billing' ? (
+        <SettingsSectionPanel>
+          <EmptyState
+            title={lang.billing.emptyTitle}
+            description={lang.billing.emptyDescription}
+          />
+        </SettingsSectionPanel>
+      ) : null}
 
       <FormDialog
         isOpen={showGoogleUnlinkConfirm}

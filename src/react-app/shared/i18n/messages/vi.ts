@@ -8,11 +8,13 @@ export const viClientLang = {
     consoleTitle: 'Bảng điều khiển client',
     fallbackUser: 'Người dùng client',
     logout: 'Đăng xuất',
+    back: 'Quay lại',
     localeLabel: 'Ngôn ngữ',
     themeLabel: 'Giao diện',
     themeOptions: {
       light: 'Sáng',
       dark: 'Tối',
+      system: 'Hệ thống',
     },
     settings: {
       label: 'Thiết lập',
@@ -24,6 +26,11 @@ export const viClientLang = {
       dashboard: 'Tổng quan',
       settings: 'Cài đặt',
       sessions: 'Phiên đăng nhập',
+      settingsMenu: {
+        account: 'Tài khoản',
+        general: 'Chung',
+        billing: 'Thanh toán',
+      },
     },
     settingsItems: {
       userInformation: {
@@ -387,16 +394,35 @@ export const viClientLang = {
     },
   },
   myAccount: {
-    title: 'Tài khoản',
-    description:
-      'Xem không gian làm việc cá nhân và đi nhanh tới các thao tác cấp tài khoản.',
+    ...enClientLang.myAccount,
+    title: 'Cài đặt',
+    description: 'Quản lý hồ sơ, tùy chọn và thanh toán.',
     sections: {
-      accountTitle: 'Thông tin tài khoản',
-      accountDescription: 'Xem nhanh thông tin hồ sơ tài khoản hiện tại.',
+      ...enClientLang.myAccount.sections,
+      accountTitle: 'Tài khoản',
+      accountDescription: 'Xem hồ sơ và quản lý bảo mật tài khoản.',
+      generalTitle: 'Chung',
+      generalDescription: 'Ngôn ngữ, giao diện và tùy chọn workspace.',
+      billingTitle: 'Thanh toán',
+      billingDescription: 'Xem gói dịch vụ, phương thức thanh toán và hóa đơn.',
       securityTitle: 'Bảo mật tài khoản',
       securityDescription: 'Quản lý các thiết lập bảo mật cho tài khoản của bạn.',
       controlsTitle: 'Điều khiển tài khoản',
-      controlsDescription: 'Truy cập hỗ trợ (chỉ đọc)',
+      controlsDescription: 'Truy cập hỗ trợ và điều khiển phiên.',
+    },
+    preferences: {
+      ...enClientLang.myAccount.preferences,
+      languageTitle: 'Ngôn ngữ',
+      languageDescription: 'Chọn ngôn ngữ hiển thị cho client portal.',
+      themeTitle: 'Giao diện',
+      themeDescription: 'Chọn sáng, tối hoặc theo hệ thống.',
+      logoutTitle: 'Đăng xuất',
+      logoutDescription: 'Kết thúc phiên trên thiết bị này.',
+    },
+    billing: {
+      ...enClientLang.myAccount.billing,
+      emptyTitle: 'Thanh toán chưa khả dụng',
+      emptyDescription: 'Quản lý gói và hóa đơn sẽ sớm có tại đây.',
     },
     account: {
       changeImage: 'Đổi ảnh',

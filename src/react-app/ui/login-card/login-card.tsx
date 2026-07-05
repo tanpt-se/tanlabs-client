@@ -1,5 +1,7 @@
 'use client';
 
+import type { FormEvent } from 'react';
+
 import { CubeIcon } from '@heroicons/react/24/outline';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -59,7 +61,7 @@ export function LoginCard(props: {
   onEmailChange: (value: string) => void;
   onGoogleSignIn: () => void;
   onPasswordChange: (value: string) => void;
-  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+  onSubmit: (event: FormEvent<HTMLFormElement>) => void;
   onTwoFactorCodeChange: (value: string) => void;
   password: string;
   pendingTwoFactorMethod?: TwoFactorMethod;

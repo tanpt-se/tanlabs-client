@@ -4,5 +4,4 @@ export type {
   ShellSideNavBreadcrumb,
   ShellSideNavGroup,
   ShellSideNavItem,
-  ShellSideNavUserMenu,
 } from './types';

@@ -13,6 +13,7 @@ export const koClientLang = {
     localeLabel: '언어',
     themeLabel: '테마',
     themeOptions: {
+      ...enClientLang.shell.themeOptions,
       light: '라이트',
       dark: '다크',
     },
@@ -24,9 +25,15 @@ export const koClientLang = {
       close: '설정 닫기',
     },
     nav: {
+      ...enClientLang.shell.nav,
       dashboard: '대시보드',
       settings: '설정',
       sessions: '세션',
+      settingsMenu: {
+        account: '계정',
+        general: '일반',
+        billing: '결제',
+      },
     },
     settingsItems: {
       userInformation: {
@@ -384,15 +391,21 @@ export const koClientLang = {
     },
   },
   myAccount: {
-    title: '계정',
-    description: '개인 작업 공간을 확인하고 계정 수준 작업으로 빠르게 이동합니다.',
+    ...enClientLang.myAccount,
+    title: '설정',
+    description: '프로필, 환경 설정, 결제를 관리합니다.',
     sections: {
-      accountTitle: '계정 정보',
-      accountDescription: '현재 계정 프로필 요약을 확인합니다.',
+      ...enClientLang.myAccount.sections,
+      accountTitle: '계정',
+      accountDescription: '프로필과 계정 보안을 관리합니다.',
+      generalTitle: '일반',
+      generalDescription: '언어, 테마, 워크스페이스 설정.',
+      billingTitle: '결제',
+      billingDescription: '플랜, 결제 수단, 청구서를 확인합니다.',
       securityTitle: '계정 보안',
       securityDescription: '이 계정의 보안 설정을 관리합니다.',
       controlsTitle: '계정 작업',
-      controlsDescription: '지원 접근 (읽기 전용)',
+      controlsDescription: '지원 접근 및 세션 제어.',
     },
     account: {
       changeImage: '이미지 변경',

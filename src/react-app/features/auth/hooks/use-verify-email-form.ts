@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -67,7 +67,7 @@ export function useVerifyEmailForm(
     return () => window.clearTimeout(timeout);
   }, [resendAvailableIn]);
 
-  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
     const result = schema.safeParse({ code });

@@ -13,6 +13,7 @@ export const jaClientLang = {
     localeLabel: '言語',
     themeLabel: 'テーマ',
     themeOptions: {
+      ...enClientLang.shell.themeOptions,
       light: 'ライト',
       dark: 'ダーク',
     },
@@ -24,9 +25,15 @@ export const jaClientLang = {
       close: '設定を閉じる',
     },
     nav: {
+      ...enClientLang.shell.nav,
       dashboard: 'ダッシュボード',
       settings: '設定',
       sessions: 'セッション',
+      settingsMenu: {
+        account: 'アカウント',
+        general: '一般',
+        billing: '請求',
+      },
     },
     settingsItems: {
       userInformation: {
@@ -389,15 +396,21 @@ export const jaClientLang = {
     },
   },
   myAccount: {
-    title: 'アカウント',
-    description: '個人の管理ワークスペースを確認し、アカウントレベルの操作へすばやく移動できます。',
+    ...enClientLang.myAccount,
+    title: '設定',
+    description: 'プロフィール、環境設定、請求を管理します。',
     sections: {
-      accountTitle: 'アカウント情報',
-      accountDescription: '現在のアカウントプロフィール概要を確認します。',
+      ...enClientLang.myAccount.sections,
+      accountTitle: 'アカウント',
+      accountDescription: 'プロフィールとアカウントセキュリティを管理します。',
+      generalTitle: '一般',
+      generalDescription: '言語、外観、ワークスペースの設定。',
+      billingTitle: '請求',
+      billingDescription: 'プラン、支払い方法、請求書を確認します。',
       securityTitle: 'アカウントセキュリティ',
       securityDescription: 'このアカウントのセキュリティ設定を管理します。',
       controlsTitle: 'アカウント操作',
-      controlsDescription: 'サポートアクセス（読み取り専用）',
+      controlsDescription: 'サポートアクセスとセッション操作。',
     },
     account: {
       changeImage: '画像を変更',

@@ -9,22 +9,17 @@ export interface ShellSideNavBrand {
 
 export interface ShellSideNavItem {
   key: string;
-  href: string;
+  href?: string;
   label: string;
   icon?: ReactNode;
   isSelected?: boolean;
+  collapsible?: boolean | { defaultIsCollapsed?: boolean };
+  children?: ShellSideNavItem[];
 }
 
 export interface ShellSideNavGroup {
   label?: string;
   items: ShellSideNavItem[];
-}
-
-export interface ShellSideNavUserMenu {
-  userName?: string;
-  email?: string;
-  logoutLabel?: string;
-  onLogout?: () => void | Promise<void>;
 }
 
 export interface ShellSideNavBreadcrumb {

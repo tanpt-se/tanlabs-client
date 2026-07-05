@@ -17,6 +17,11 @@ const shell = {
     dashboard: 'Dashboard',
     settings: 'Settings',
     sessions: 'Sessions',
+    settingsMenu: {
+      account: 'Account',
+      general: 'General',
+      billing: 'Billing',
+    },
   },
   settingsItems: {
     userInformation: {
@@ -53,6 +58,11 @@ const shell = {
     dashboard: string;
     settings: string;
     sessions: string;
+    settingsMenu: {
+      account: string;
+      general: string;
+      billing: string;
+    };
   };
   settingsItems: {
     userInformation: { title: string; description: string };
@@ -537,14 +547,32 @@ export const enClientLang = {
   },
   myAccount: {
     title: 'Settings',
-    description: 'Manage your account profile, security, and session controls.',
+    description: 'Manage your account profile, preferences, and billing.',
     sections: {
-      accountTitle: 'Account information',
-      accountDescription: 'Review the current account profile summary.',
+      accountTitle: 'Account',
+      accountDescription: 'Review profile details and manage account security.',
+      generalTitle: 'General',
+      generalDescription: 'Language, appearance, and workspace preferences.',
+      billingTitle: 'Billing',
+      billingDescription: 'View your plan, payment methods, and invoices.',
       securityTitle: 'Account Security',
       securityDescription: 'Manage security settings for this account.',
       controlsTitle: 'Account Controls',
-      controlsDescription: 'Support access (read-only)',
+      controlsDescription: 'Support access and session controls.',
+    },
+    preferences: {
+      languageTitle: 'Language',
+      languageDescription: 'Choose the display language for the client portal.',
+      themeTitle: 'Theme',
+      themeDescription: 'Choose light, dark, or system appearance.',
+      logoutTitle: 'Sign out',
+      logoutDescription: 'End your session on this device.',
+    },
+    billing: {
+      title: 'Billing',
+      description: 'View your plan, payment methods, and invoices.',
+      emptyTitle: 'Billing is not available yet',
+      emptyDescription: 'Plan management and invoices will appear here soon.',
     },
     account: {
       changeImage: 'Change Image',

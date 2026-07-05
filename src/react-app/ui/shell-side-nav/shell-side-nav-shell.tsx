@@ -4,7 +4,6 @@ import type { MouseEvent, ReactNode } from 'react';
 
 import { AppShell } from '@astryxdesign/core/AppShell';
 import { Layout, LayoutContent } from '@astryxdesign/core/Layout';
-import { MoreMenu } from '@astryxdesign/core/MoreMenu';
 import {
   SideNav,
   SideNavHeading,
@@ -12,19 +11,14 @@ import {
   SideNavSection,
 } from '@astryxdesign/core/SideNav';
 import { VStack } from '@astryxdesign/core/Stack';
-import { UserCircleIcon } from '@heroicons/react/24/outline';
-import { Icon } from '@astryxdesign/core/Icon';
 
 import { AppBreadcrumbs } from '@tanlabs/astryx';
-
-import { LOCALE_OPTIONS } from '@/shared/i18n/locale-options';
-import { useLocale, useTheme } from '@tanlabs/providers';
 
 import type {
   ShellSideNavBrand,
   ShellSideNavBreadcrumb,
   ShellSideNavGroup,
-  ShellSideNavUserMenu,
+  ShellSideNavItem,
 } from './types';
 
 function shouldHandleClientNavigation(event: MouseEvent<Element>) {
@@ -38,71 +32,67 @@ function shouldHandleClientNavigation(event: MouseEvent<Element>) {
   );
 }
 
-function ShellSideNavUserFooter({ userMenu }: { userMenu: ShellSideNavUserMenu }) {
-  const { setLocale } = useLocale();
-  const { setTheme } = useTheme();
-  const displayName = userMenu.userName ?? userMenu.email ?? 'Account';
+function ShellSideNavItemTree({
+  item,
+  onNavigate,
+}: {
+  item: ShellSideNavItem;
+  onNavigate?: (href: string) => void;
+}) {
+  const hasChildren = Boolean(item.children?.length);
+
+  const handleClick = (event: MouseEvent<Element>) => {
+    if (!item.href || !onNavigate || !shouldHandleClientNavigation(event)) {
+      return;
+    }
+    event.preventDefault();
+    onNavigate(item.href);
+  };
+
+  if (hasChildren) {
+    return (
+      <SideNavItem
+        label={item.label}
+        icon={item.icon}
+        href={item.href}
+        isSelected={item.isSelected}
+        collapsible={item.collapsible ?? true}
+        onClick={item.href ? handleClick : undefined}
+      >
+        {item.children?.map((child) => (
+          <ShellSideNavItemTree key={child.key} item={child} onNavigate={onNavigate} />
+        ))}
+      </SideNavItem>
+    );
+  }
 
   return (
-    <SideNavSection title="Account" isHeaderHidden>
-      <SideNavItem
-        label={displayName}
-        icon={<Icon icon={UserCircleIcon} size="sm" />}
-        endContent={
-          <MoreMenu
-            size="sm"
-            label="Account options"
-            items={[
-              {
-                type: 'section',
-                title: 'Theme',
-                items: [
-                  { label: 'Light', onClick: () => setTheme('light') },
-                  { label: 'Dark', onClick: () => setTheme('dark') },
-                  { label: 'System', onClick: () => setTheme('system') },
-                ],
-              },
-              {
-                type: 'section',
-                title: 'Language',
-                items: LOCALE_OPTIONS.map((option) => ({
-                  label: option.label,
-                  onClick: () => setLocale(option.value),
-                })),
-              },
-              ...(userMenu.onLogout
-                ? [
-                    { type: 'divider' as const },
-                    {
-                      label: userMenu.logoutLabel ?? 'Logout',
-                      onClick: () => {
-                        void userMenu.onLogout?.();
-                      },
-                    },
-                  ]
-                : []),
-            ]}
-          />
-        }
-      />
-    </SideNavSection>
+    <SideNavItem
+      label={item.label}
+      href={item.href}
+      icon={item.icon}
+      isSelected={item.isSelected}
+      onClick={handleClick}
+    />
   );
 }
 
 export function ShellSideNavLayout({
   brand,
   breadcrumbs,
+  backHref,
+  backLabel,
   children,
   navGroups,
   onNavigate,
-  userMenu,
 }: {
   brand?: ShellSideNavBrand;
   breadcrumbs?: ShellSideNavBreadcrumb[];
+  backHref?: string;
+  backLabel?: string;
   children: ReactNode;
   navGroups: ShellSideNavGroup[];
   onNavigate?: (href: string) => void;
-  userMenu?: ShellSideNavUserMenu;
 }) {
   return (
     <AppShell
@@ -118,10 +108,14 @@ export function ShellSideNavLayout({
                 subheading={brand.subtitle}
                 headingHref={brand.href}
                 icon={brand.icon}
+                style={{
+                  minHeight: 'calc(var(--size-element-lg) + var(--spacing-6))',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                }}
               />
             ) : undefined
           }
-          footer={userMenu ? <ShellSideNavUserFooter userMenu={userMenu} /> : undefined}
         >
           {navGroups.map((group, index) => (
             <SideNavSection
@@ -130,20 +124,7 @@ export function ShellSideNavLayout({
               isHeaderHidden={!group.label}
             >
               {group.items.map((item) => (
-                <SideNavItem
-                  key={item.key}
-                  label={item.label}
-                  href={item.href}
-                  icon={item.icon}
-                  isSelected={item.isSelected}
-                  onClick={(event) => {
-                    if (!item.href || !onNavigate || !shouldHandleClientNavigation(event)) {
-                      return;
-                    }
-                    event.preventDefault();
-                    onNavigate(item.href);
-                  }}
-                />
+                <ShellSideNavItemTree key={item.key} item={item} onNavigate={onNavigate} />
               ))}
             </SideNavSection>
           ))}
@@ -153,10 +134,22 @@ export function ShellSideNavLayout({
       <Layout
         height="fill"
         content={
-          <LayoutContent padding={4}>
-            <VStack gap={4} hAlign="stretch">
+          <LayoutContent
+            padding={4}
+            style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0, height: '100%' }}
+          >
+            <VStack
+              gap={4}
+              hAlign="stretch"
+              style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column' }}
+            >
               {breadcrumbs && breadcrumbs.length > 0 ? (
-                <AppBreadcrumbs items={breadcrumbs} onNavigate={onNavigate} />
+                <AppBreadcrumbs
+                  items={breadcrumbs}
+                  onNavigate={onNavigate}
+                  backHref={backHref}
+                  backLabel={backLabel}
+                />
               ) : null}
               {children}
             </VStack>

@@ -18,8 +18,11 @@ export const CLIENT_PUBLIC_ROUTES = {
 export const CLIENT_AUTH_ROUTES = {
   dashboard: '/',
   settings: '/settings',
-  /** @deprecated Use `settings`. Kept for redirects and OAuth return paths. */
-  myAccount: '/settings',
+  settingsAccount: '/settings/account',
+  settingsGeneral: '/settings/general',
+  settingsBilling: '/settings/billing',
+  /** @deprecated Use `settingsAccount`. Kept for redirects and OAuth return paths. */
+  myAccount: '/settings/account',
 } as const;
 
 export const DEFAULT_AUTHENTICATED_REDIRECT = CLIENT_AUTH_ROUTES.dashboard;

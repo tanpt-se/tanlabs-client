@@ -25,7 +25,37 @@ export function getClientLang(locale: Locale): ClientLang {
 }
 
 export function resolveDashboardHeaderText(pathname: string, lang: ClientLang): DashboardHeaderText {
-  if (pathname === CLIENT_AUTH_ROUTES.settings) {
+  if (pathname === CLIENT_AUTH_ROUTES.settingsAccount) {
+    return {
+      breadcrumb: lang.myAccount.sections.accountTitle,
+      title: lang.myAccount.sections.accountTitle,
+      description: lang.myAccount.sections.accountDescription,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_AUTH_ROUTES.settingsGeneral) {
+    return {
+      breadcrumb: lang.myAccount.sections.generalTitle,
+      title: lang.myAccount.sections.generalTitle,
+      description: lang.myAccount.sections.generalDescription,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_AUTH_ROUTES.settingsBilling) {
+    return {
+      breadcrumb: lang.myAccount.sections.billingTitle,
+      title: lang.myAccount.sections.billingTitle,
+      description: lang.myAccount.sections.billingDescription,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_AUTH_ROUTES.settings || pathname.startsWith('/settings/')) {
     return {
       breadcrumb: lang.shell.nav.settings,
       title: lang.myAccount.title,
@@ -36,4 +66,27 @@ export function resolveDashboardHeaderText(pathname: string, lang: ClientLang): 
   }
 
   return buildDashboardHeaderText(lang);
+}
+
+export function resolveDashboardPageChrome(pathname: string, lang: ClientLang) {
+  const isSettingsSubpage =
+    pathname === CLIENT_AUTH_ROUTES.settingsAccount ||
+    pathname === CLIENT_AUTH_ROUTES.settingsGeneral ||
+    pathname === CLIENT_AUTH_ROUTES.settingsBilling;
+
+  if (isSettingsSubpage) {
+    const headerText = resolveDashboardHeaderText(pathname, lang);
+    return {
+      breadcrumbs: [
+        { label: lang.shell.nav.dashboard, href: CLIENT_AUTH_ROUTES.dashboard },
+        { label: lang.shell.nav.settings, href: CLIENT_AUTH_ROUTES.settingsAccount },
+        { label: headerText.title },
+      ],
+    };
+  }
+
+  const headerText = resolveDashboardHeaderText(pathname, lang);
+  return {
+    breadcrumbs: [{ label: headerText.breadcrumb, description: headerText.description }],
+  };
 }
