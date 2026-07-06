@@ -4,6 +4,8 @@ import type { TokenPayload } from '@tanlabs/types';
 
 import { deleteClientCookie, setClientCookie } from '@/lib/platform/cookies';
 
+import { dispatchSessionCleared } from './session-events';
+
 function decodeBase64Url(input: string): string | null {
   try {
     const normalized = input.replace(/-/g, '+').replace(/_/g, '/');
@@ -82,6 +84,7 @@ export function createSessionStore<TUser>(options: SessionStoreOptions) {
       accessToken = null;
       user = null;
       clearAuthCookie();
+      dispatchSessionCleared();
     },
   };
 }

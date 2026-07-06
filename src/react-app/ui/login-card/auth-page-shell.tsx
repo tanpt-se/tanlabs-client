@@ -7,6 +7,7 @@ import { Center } from '@astryxdesign/core/Center';
 import { Icon } from '@astryxdesign/core/Icon';
 import { VStack } from '@astryxdesign/core/Layout';
 import { Text } from '@astryxdesign/core/Text';
+import { BRAND } from '@tanlabs/config';
 
 import { loginCardContentStyle, loginCardPageStyle } from './styles';
 
@@ -31,7 +32,7 @@ export function AuthPageShell({
         <VStack gap={2} hAlign="center">
           <Icon icon={CubeIcon} size="lg" />
           <Text type="body" weight="bold" size="lg">
-            Product Inc.
+            {BRAND.webTitle}
           </Text>
         </VStack>
         {children}

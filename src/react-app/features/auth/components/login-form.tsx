@@ -4,19 +4,24 @@ import { LoginCard, type LoginCardCopy } from '@/ui/login-card';
 import { startSocialAuth } from '@/features/auth/lib/social-auth';
 
 import { RateLimitModal } from '@/features/auth/components/rate-limit-modal';
+import { usePublicOAuthConfig } from '@/features/auth/lib/public-oauth-config';
 import { useWebLoginForm } from '@/features/auth/hooks/use-web-login-form';
-import { getPublicAuthRuntime } from '@/shared/auth/public-auth-runtime';
 import type { ClientLang } from '@/shared/i18n';
 import { CLIENT_PUBLIC_ROUTES, resolveAuthenticatedRedirect } from '@/shared/routing';
+import { appendNextQueryParam } from '@/shared/routing/login-url';
 
 export function LoginForm({
   lang,
   nextPath,
   notice,
+  variant = 'page',
+  onLoginSuccess,
 }: {
   lang: ClientLang['login'];
   nextPath?: string;
   notice?: { title: string; description: string; ctaHref?: string; ctaLabel?: string };
+  variant?: 'page' | 'embedded';
+  onLoginSuccess?: () => void;
 }) {
   const {
     clearRateLimit,
@@ -32,8 +37,12 @@ export function LoginForm({
     setTwoFactorCode,
     submit,
     twoFactorCode,
-  } = useWebLoginForm(lang, nextPath, resolveAuthenticatedRedirect);
-  const googleAuthEnabled = getPublicAuthRuntime().getGoogleOAuthEnabled();
+  } = useWebLoginForm(lang, nextPath, resolveAuthenticatedRedirect, { onLoginSuccess });
+  const { googleEnabled: googleAuthEnabled } = usePublicOAuthConfig();
+  const createAccountHref = appendNextQueryParam(
+    CLIENT_PUBLIC_ROUTES.register,
+    nextPath ? resolveAuthenticatedRedirect(nextPath) : undefined,
+  );
   const copy: LoginCardCopy = {
     title: lang.formTitle,
     subtitle: lang.formDescription,
@@ -60,7 +69,7 @@ export function LoginForm({
     <>
       <LoginCard
         copy={copy}
-        createAccountHref={CLIENT_PUBLIC_ROUTES.register}
+        createAccountHref={createAccountHref}
         email={email}
         error={error}
         forgotPasswordHref={CLIENT_PUBLIC_ROUTES.forgotPassword}
@@ -76,6 +85,7 @@ export function LoginForm({
         password={password}
         pendingTwoFactorMethod={pendingTwoFactor?.method}
         twoFactorCode={twoFactorCode}
+        variant={variant}
       />
       {isRateLimited && rateLimitedUntil !== null ? (
         <RateLimitModal

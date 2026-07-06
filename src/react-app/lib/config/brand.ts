@@ -10,7 +10,7 @@ export interface BrandConfig {
 export const BRAND: BrandConfig = {
   name: 'TanLabs',
   shortName: 'TanLabs',
-  webTitle: 'User Portal',
+  webTitle: 'Tanlabs-shop',
   placeholderDomain: 'tanlabs.local',
   totpIssuer: 'TanLabs',
   heroEyebrow: 'TanLabs',

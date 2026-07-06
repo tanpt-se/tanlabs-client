@@ -16,7 +16,6 @@ export interface PublicAuthRuntime {
   requests: PublicAuthRequests;
   getApiBaseUrl: () => string;
   getTurnstileSiteKey: () => string | undefined;
-  getGoogleOAuthEnabled: () => boolean;
   apiPost: PublicAuthPost;
   usersSocialLinkStart: (provider: string) => string;
   loginRateLimitCookieName?: string;

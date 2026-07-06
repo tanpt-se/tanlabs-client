@@ -66,6 +66,7 @@ export function LoginCard(props: {
   password: string;
   pendingTwoFactorMethod?: TwoFactorMethod;
   twoFactorCode: string;
+  variant?: 'page' | 'embedded';
 }) {
   const {
     copy,
@@ -85,6 +86,7 @@ export function LoginCard(props: {
     password,
     pendingTwoFactorMethod,
     twoFactorCode,
+    variant = 'page',
   } = props;
 
   const pendingTwoFactor = Boolean(pendingTwoFactorMethod);
@@ -98,88 +100,45 @@ export function LoginCard(props: {
   const cardTitle = pendingTwoFactor ? copy.twoFactorStepTitle : copy.title;
   const cardSubtitle = pendingTwoFactor ? copy.twoFactorStepDescription : copy.subtitle;
   const showForgotLink = Boolean(error && forgotPasswordHref && copy.forgotPassword);
+  const isEmbedded = variant === 'embedded';
 
-  return (
-    <Center axis="both" width="100%" style={loginCardPageStyle}>
-      <VStack gap={4} hAlign="center" style={loginCardContentStyle}>
-        <VStack gap={2} hAlign="center">
-          <Icon icon={CubeIcon} size="lg" />
-          <Text type="body" weight="bold" size="lg">
-            Product Inc.
-          </Text>
-        </VStack>
+  const formCard = (
+    <Card padding={isEmbedded ? 0 : 8} width="100%">
+      <form onSubmit={onSubmit}>
+        <VStack gap={4} hAlign="stretch">
+          {!isEmbedded ? (
+            <VStack gap={1} hAlign="center">
+              <Heading level={2}>{cardTitle}</Heading>
+              <Text type="body" color="secondary" size="sm">
+                {cardSubtitle}
+              </Text>
+            </VStack>
+          ) : null}
 
-        <Card padding={8} width="100%">
-          <form onSubmit={onSubmit}>
-            <VStack gap={4} hAlign="stretch">
-              <VStack gap={1} hAlign="center">
-                <Heading level={2}>{cardTitle}</Heading>
-                <Text type="body" color="secondary" size="sm">
-                  {cardSubtitle}
-                </Text>
-              </VStack>
+          {notice ? (
+            <Banner status="info" title={notice.title} description={notice.description} />
+          ) : null}
 
-              {notice ? (
-                <Banner status="info" title={notice.title} description={notice.description} />
-              ) : null}
-
-              {!pendingTwoFactor ? (
-                <VStack gap={2}>
-                  <TextInput
-                    label={copy.emailLabel}
-                    isLabelHidden
-                    type="email"
-                    placeholder={copy.emailPlaceholder}
-                    value={email}
-                    onChange={onEmailChange}
-                    size="lg"
-                    isDisabled={loading || isRateLimited}
-                  />
-                  <VStack gap={1}>
-                    <TextInput
-                      label={copy.passwordLabel}
-                      isLabelHidden
-                      placeholder={copy.passwordPlaceholder}
-                      type="password"
-                      value={password}
-                      onChange={onPasswordChange}
-                      size="lg"
-                      isDisabled={loading || isRateLimited}
-                      status={
-                        error
-                          ? {
-                              type: 'error',
-                              message: error,
-                            }
-                          : undefined
-                      }
-                    />
-                    {showForgotLink ? (
-                      <VStack hAlign="end">
-                        <Link
-                          href={forgotPasswordHref}
-                          size="sm"
-                          color="secondary"
-                          type="supporting"
-                        >
-                          {copy.forgotPassword}
-                        </Link>
-                      </VStack>
-                    ) : null}
-                  </VStack>
-                </VStack>
-              ) : (
+          {!pendingTwoFactor ? (
+            <VStack gap={2}>
+              <TextInput
+                label={copy.emailLabel}
+                isLabelHidden
+                type="email"
+                placeholder={copy.emailPlaceholder}
+                value={email}
+                onChange={onEmailChange}
+                size="lg"
+                isDisabled={loading || isRateLimited}
+              />
+              <VStack gap={1}>
                 <TextInput
-                  label={
-                    pendingTwoFactorMethod === 'email_otp'
-                      ? copy.otpEmailLabel
-                      : copy.otpAuthenticatorLabel
-                  }
+                  label={copy.passwordLabel}
                   isLabelHidden
-                  type="text"
-                  placeholder={copy.otpPlaceholder}
-                  value={twoFactorCode}
-                  onChange={onTwoFactorCodeChange}
+                  placeholder={copy.passwordPlaceholder}
+                  type="password"
+                  value={password}
+                  onChange={onPasswordChange}
                   size="lg"
                   isDisabled={loading || isRateLimited}
                   status={
@@ -191,55 +150,108 @@ export function LoginCard(props: {
                       : undefined
                   }
                 />
-              )}
-
-              <Button
-                label={submitLabel}
-                type="submit"
-                variant="primary"
-                size="lg"
-                isLoading={loading}
-                isDisabled={isRateLimited}
-              />
-
-              {googleAuthEnabled && !pendingTwoFactor ? (
-                <>
-                  <Divider label={copy.orText} />
-                  <VStack gap={3} hAlign="stretch">
-                    <Button
-                      label="Login with Apple"
-                      type="button"
-                      variant="secondary"
-                      icon={<AppleIcon />}
-                      size="lg"
-                      isDisabled={loading || isRateLimited}
-                    />
-                    <Button
-                      label={copy.googleSignIn}
-                      type="button"
-                      variant="secondary"
-                      icon={<GoogleIcon />}
-                      size="lg"
-                      isDisabled={loading || isRateLimited}
-                      onClick={onGoogleSignIn}
-                    />
-                  </VStack>
-                </>
-              ) : null}
-
-              {createAccountHref && copy.createAccount ? (
-                <VStack hAlign="center">
-                  <Text type="supporting" color="secondary">
-                    Don&apos;t have an account?{' '}
-                    <Link href={createAccountHref} type="supporting">
-                      {copy.createAccount}
+                {showForgotLink ? (
+                  <VStack hAlign="end">
+                    <Link href={forgotPasswordHref} size="sm" color="secondary" type="supporting">
+                      {copy.forgotPassword}
                     </Link>
-                  </Text>
-                </VStack>
-              ) : null}
+                  </VStack>
+                ) : null}
+              </VStack>
             </VStack>
-          </form>
-        </Card>
+          ) : (
+            <TextInput
+              label={
+                pendingTwoFactorMethod === 'email_otp'
+                  ? copy.otpEmailLabel
+                  : copy.otpAuthenticatorLabel
+              }
+              isLabelHidden
+              type="text"
+              placeholder={copy.otpPlaceholder}
+              value={twoFactorCode}
+              onChange={onTwoFactorCodeChange}
+              size="lg"
+              isDisabled={loading || isRateLimited}
+              status={
+                error
+                  ? {
+                      type: 'error',
+                      message: error,
+                    }
+                  : undefined
+              }
+            />
+          )}
+
+          <Button
+            label={submitLabel}
+            type="submit"
+            variant="primary"
+            size="lg"
+            isLoading={loading}
+            isDisabled={isRateLimited}
+          />
+
+          {googleAuthEnabled && !pendingTwoFactor ? (
+            <>
+              <Divider label={copy.orText} />
+              <VStack gap={3} hAlign="stretch">
+                <Button
+                  label="Login with Apple"
+                  type="button"
+                  variant="secondary"
+                  icon={<AppleIcon />}
+                  size="lg"
+                  isDisabled={loading || isRateLimited}
+                />
+                <Button
+                  label={copy.googleSignIn}
+                  type="button"
+                  variant="secondary"
+                  icon={<GoogleIcon />}
+                  size="lg"
+                  isDisabled={loading || isRateLimited}
+                  onClick={onGoogleSignIn}
+                />
+              </VStack>
+            </>
+          ) : null}
+
+          {createAccountHref && copy.createAccount ? (
+            <VStack hAlign="center">
+              <Text type="supporting" color="secondary">
+                Don&apos;t have an account?{' '}
+                <Link href={createAccountHref} type="supporting">
+                  {copy.createAccount}
+                </Link>
+              </Text>
+            </VStack>
+          ) : null}
+        </VStack>
+      </form>
+    </Card>
+  );
+
+  if (isEmbedded) {
+    return (
+      <VStack gap={4} hAlign="stretch" style={loginCardContentStyle}>
+        {formCard}
+      </VStack>
+    );
+  }
+
+  return (
+    <Center axis="both" width="100%" style={loginCardPageStyle}>
+      <VStack gap={4} hAlign="center" style={loginCardContentStyle}>
+        <VStack gap={2} hAlign="center">
+          <Icon icon={CubeIcon} size="lg" />
+          <Text type="body" weight="bold" size="lg">
+            Product Inc.
+          </Text>
+        </VStack>
+
+        {formCard}
 
         <VStack hAlign="center" width="100%">
           <Text type="supporting" color="secondary" justify="center">

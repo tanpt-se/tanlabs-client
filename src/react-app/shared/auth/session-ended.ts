@@ -1,7 +1,9 @@
 import { deleteClientCookie } from '@/lib/platform';
 
 import { clientAuthConfig } from '@/auth-config';
-import { clearSession } from '@/shared/auth';
+import { clearSession } from '@/shared/auth/session';
+import { consumeAuthReturnPath } from '@/shared/routing/login-url';
+import { buildOpenShopLoginUrl } from '@/shared/routing/shop-login';
 
 const defaultNormalizeReason = (incomingReason: string | null) => ({
   reason: incomingReason === 'session-ended' ? 'session-ended' : 'session-revoked',
@@ -9,12 +11,10 @@ const defaultNormalizeReason = (incomingReason: string | null) => ({
 
 export function resolveSessionEndedLoginUrl(requestUrl: string): URL {
   const incomingReason = new URL(requestUrl).searchParams.get('reason');
-  const resolved = (clientAuthConfig.sessionEnded?.normalizeReason ?? defaultNormalizeReason)(
-    incomingReason,
-  );
-  const redirectUrl = new URL(clientAuthConfig.routes.login, requestUrl);
-  redirectUrl.searchParams.set('reason', resolved.reason);
-  return redirectUrl;
+  const resolved = defaultNormalizeReason(incomingReason);
+  const pendingReturn = consumeAuthReturnPath();
+  const path = buildOpenShopLoginUrl(pendingReturn ?? undefined, resolved.reason);
+  return new URL(path, requestUrl);
 }
 
 export function clearAuthCookies(): void {
@@ -30,9 +30,13 @@ export function clearAuthCookies(): void {
   }
 }
 
-export function handleSessionEnded(): string {
+export function resetClientAuthState(): void {
   clearAuthCookies();
   clearSession();
+}
+
+export function handleSessionEnded(): string {
+  resetClientAuthState();
   const url = resolveSessionEndedLoginUrl(window.location.href);
   return `${url.pathname}${url.search}`;
 }

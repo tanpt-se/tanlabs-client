@@ -27,6 +27,7 @@
 			"@tanlabs/ui/login-card": ["src/react-app/ui/login-card/index.ts"],
 			"@tanlabs/ui/settings": ["src/react-app/ui/settings/index.ts"],
 			"@tanlabs/ui/shell-side-nav": ["src/react-app/ui/shell-side-nav/index.ts"],
+			"@tanlabs/ui/shell-top-nav": ["src/react-app/ui/shell-top-nav/index.ts"],
 			"@tanlabs/config": ["src/react-app/lib/config/index.ts"],
 			"@tanlabs/contracts": ["src/react-app/lib/contracts/index.ts"],
 			"@tanlabs/platform": ["src/react-app/lib/platform/index.ts"],

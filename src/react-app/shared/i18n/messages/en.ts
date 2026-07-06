@@ -4,24 +4,56 @@ import { shellChromeEn } from '@/shared/i18n/shell-base-en';
 
 const shell = {
   ...shellChromeEn,
-  title: `${BRAND.shortName} CLIENT`,
-  consoleTitle: 'Client Console',
-  fallbackUser: 'Client User',
+  title: BRAND.webTitle,
+  consoleTitle: 'Tanlabs Shop',
+  fallbackUser: 'Shop Customer',
   settings: {
-    label: 'Settings',
-    title: 'Security and session tools',
-    description: 'Manage active sessions and configure two-factor authentication from this area.',
-    close: 'Close settings',
+    label: 'Account',
+    title: 'Account and preferences',
+    description: 'Manage your profile, preferences, and billing from this area.',
+    close: 'Close account',
   },
   nav: {
-    dashboard: 'Dashboard',
-    settings: 'Settings',
-    sessions: 'Sessions',
-    settingsMenu: {
-      account: 'Account',
-      general: 'General',
-      billing: 'Billing',
+    shop: 'Shop',
+    partnership: 'Partnership',
+    blog: 'News / Blog',
+    about: 'About Us',
+    account: 'My Account',
+    shopMenu: {
+      allProducts: 'All Products',
+      allProductsDescription: 'Browse the full Tanlabs-shop catalog.',
+      categories: 'Categories',
+      categoriesDescription: 'Shop by product type and everyday essentials.',
+      collections: 'Collections',
+      collectionsDescription: 'Curated product groups and themed bundles.',
+      newArrivals: 'New Arrivals',
+      newArrivalsDescription: 'See the latest products added to the shop.',
+      bestSellers: 'Best Sellers',
+      bestSellersDescription: 'Customer favorites and top-rated picks.',
+      sale: 'Sale',
+      saleDescription: 'Limited-time offers and discounted products.',
+      featuredTitle: 'New Arrivals',
+      featuredDescription: 'Discover the latest products added to Tanlabs-shop.',
+      featuredAction: 'Shop now',
     },
+    accountMenu: {
+      account: 'Account',
+      accountDescription: 'Profile, security, and linked sign-in methods.',
+      general: 'General',
+      generalDescription: 'Language, theme, and support access.',
+      billing: 'Billing',
+      billingDescription: 'Plans, invoices, and payment methods.',
+      featuredTitle: 'Your account',
+      featuredDescription: 'Manage profile, preferences, and billing in one place.',
+    },
+  },
+  header: {
+    preferences: 'Preferences',
+    cart: 'Cart',
+    login: 'Login',
+    myAccount: 'Account',
+    languageSection: 'Language',
+    themeSection: 'Theme',
   },
   settingsItems: {
     userInformation: {
@@ -55,14 +87,46 @@ const shell = {
     close: string;
   };
   nav: {
-    dashboard: string;
-    settings: string;
-    sessions: string;
-    settingsMenu: {
-      account: string;
-      general: string;
-      billing: string;
+    shop: string;
+    partnership: string;
+    blog: string;
+    about: string;
+    account: string;
+    shopMenu: {
+      allProducts: string;
+      allProductsDescription: string;
+      categories: string;
+      categoriesDescription: string;
+      collections: string;
+      collectionsDescription: string;
+      newArrivals: string;
+      newArrivalsDescription: string;
+      bestSellers: string;
+      bestSellersDescription: string;
+      sale: string;
+      saleDescription: string;
+      featuredTitle: string;
+      featuredDescription: string;
+      featuredAction: string;
     };
+    accountMenu: {
+      account: string;
+      accountDescription: string;
+      general: string;
+      generalDescription: string;
+      billing: string;
+      billingDescription: string;
+      featuredTitle: string;
+      featuredDescription: string;
+    };
+  };
+  header: {
+    preferences: string;
+    cart: string;
+    login: string;
+    myAccount: string;
+    languageSection: string;
+    themeSection: string;
   };
   settingsItems: {
     userInformation: { title: string; description: string };
@@ -82,7 +146,7 @@ const home = {
   capabilitiesDescription: 'Main behaviors exposed by this login flow.',
   capabilities: ['Access token in memory', 'Refresh cookie strict', '2FA handled as branch'],
   formTitle: 'Sign in',
-  formDescription: 'Enter your User Portal credentials to continue.',
+  formDescription: `Enter your ${BRAND.webTitle} credentials to continue.`,
   fields: {
     email: 'Email',
     password: 'Password',
@@ -108,8 +172,14 @@ const login = {
   capabilitiesTitle: 'Capabilities',
   capabilitiesDescription: 'Main behaviors exposed by this login flow.',
   capabilities: ['Access token in memory', 'Refresh cookie strict', '2FA handled as branch'],
+  title: 'Sign in',
+  description: 'Sign in to your Tanlabs-shop account.',
+  heroDescription:
+    'Welcome back. Sign in to manage your cart, track orders, and access your account settings.',
+  imageAlt: 'Two people collaborating at a desk',
+  formSectionLabel: 'Your credentials',
   formTitle: 'Sign in',
-  formDescription: 'Enter your User Portal credentials to continue.',
+  formDescription: `Enter your ${BRAND.webTitle} credentials to continue.`,
   twoFactorStepTitle: 'Two-factor verification required',
   twoFactorStepDescription:
     'Your email and password are accepted. Complete the verification step to finish signing in.',
@@ -131,6 +201,7 @@ const login = {
   rateLimited: 'Try again later',
   orText: 'Or',
   googleSignIn: 'Sign in with Google',
+  facebookSignIn: 'Sign in with Facebook',
   forgotPassword: 'Forgot password',
   createAccount: 'Create account',
   sessionEndedTitle: 'Session ended',
@@ -184,6 +255,11 @@ const login = {
     twoFactorCodeInvalid: 'Enter a valid 6-digit code.',
   },
 } satisfies PublicInfoPanelText & {
+  title: string;
+  description: string;
+  heroDescription: string;
+  imageAlt: string;
+  formSectionLabel: string;
   formTitle: string;
   formDescription: string;
   twoFactorStepTitle: string;
@@ -202,6 +278,7 @@ const login = {
   rateLimited: string;
   orText: string;
   googleSignIn: string;
+  facebookSignIn: string;
   forgotPassword: string;
   createAccount: string;
   sessionEndedTitle: string;
@@ -234,8 +311,14 @@ const register = {
   capabilitiesTitle: 'Capabilities',
   capabilitiesDescription: 'Main behaviors exposed by this registration flow.',
   capabilities: ['Basic role only', 'Email verification required', 'Captcha protected'],
+  title: 'Create account',
+  description: 'Sign up for Tanlabs-shop and verify your email address.',
+  heroDescription:
+    'Create your Tanlabs-shop account to save preferences, track orders, and checkout faster. We will send a verification code to confirm your email.',
+  imageAlt: 'Two people collaborating at a desk',
+  formSectionLabel: 'Your details',
   formTitle: 'Create account',
-  formDescription: 'Create your User Portal account, then verify your email address.',
+  formDescription: `Create your ${BRAND.webTitle} account, then verify your email address.`,
   fields: {
     email: 'Email',
     displayName: 'Full name',
@@ -252,6 +335,7 @@ const register = {
   submitting: 'Creating account...',
   orText: 'Or',
   googleSignUp: 'Sign up with Google',
+  facebookSignUp: 'Sign up with Facebook',
   backToLogin: 'Back to login',
   socialAuthFailedTitle: 'Google sign-up failed',
   socialAuthFailedDescription: 'Unable to complete Google sign-up. Try again.',
@@ -285,6 +369,11 @@ const register = {
     captchaRequired: 'Captcha verification is required.',
   },
 } satisfies PublicInfoPanelText & {
+  title: string;
+  description: string;
+  heroDescription: string;
+  imageAlt: string;
+  formSectionLabel: string;
   formTitle: string;
   formDescription: string;
   fields: Record<string, string>;
@@ -293,6 +382,7 @@ const register = {
   submitting: string;
   orText: string;
   googleSignUp: string;
+  facebookSignUp: string;
   backToLogin: string;
   socialAuthFailedTitle: string;
   socialAuthFailedDescription: string;
@@ -313,7 +403,7 @@ const forgotPassword = {
   capabilitiesDescription: 'Main behaviors exposed by this recovery flow.',
   capabilities: ['Generic response', 'No account leakage'],
   formTitle: 'Forgot password',
-  formDescription: 'Enter your User Portal email to receive a reset link.',
+  formDescription: `Enter your ${BRAND.webTitle} email to receive a reset link.`,
   emailLabel: 'Email',
   emailPlaceholder: 'user@example.com',
   successTitle: 'Reset link sent',
@@ -354,7 +444,7 @@ const verifyEmail = {
   capabilities: ['6-digit OTP', 'Resend cooldown', 'Single-use verification'],
   formTitle: 'Verify email',
   formDescription:
-    'Enter the 6-digit code sent to your email to activate your User Portal account.',
+    `Enter the 6-digit code sent to your email to activate your ${BRAND.webTitle} account.`,
   emailLabel: 'Email',
   codeLabel: 'Verification code',
   codePlaceholder: '123456',
@@ -399,7 +489,7 @@ const accountSetup = {
   capabilitiesDescription: 'Main behaviors exposed by this first-password flow.',
   capabilities: ['Secure setup link', 'Password policy enforced', 'Email verification next'],
   formTitle: 'Set your password',
-  formDescription: 'Choose the first password for your invited User Portal account.',
+  formDescription: `Choose the first password for your invited ${BRAND.webTitle} account.`,
   successTitle: 'Password saved',
   successDescription: 'Continue with email verification to finish activation.',
   fields: {
@@ -452,7 +542,7 @@ const resetPassword = {
   capabilitiesDescription: 'Main behaviors exposed by this reset flow.',
   capabilities: ['Token required', 'Ready to continue'],
   formTitle: 'Reset password',
-  formDescription: 'Create a new password to regain access to User Portal.',
+  formDescription: `Create a new password to regain access to ${BRAND.webTitle}.`,
   successTitle: 'Password updated',
   successDescription: 'Your password has been reset. Sign in with the new password.',
   fields: {
@@ -505,16 +595,15 @@ export const enClientLang = {
   accountSetup,
   resetPassword,
   dashboard: {
-    breadcrumb: 'Overview',
+    breadcrumb: 'Home',
+    title: 'Home',
+    description: 'Welcome to Tanlabs-shop.',
     stats: {
       unreadNotification: 'Unread Notification',
       activeSession: 'Active Session',
       totalSessions: 'Total Sessions',
       currentSessions: 'Current Sessions',
     },
-    title: 'Session Governance Overview',
-    description:
-      'Review active client sessions, monitor current access footprint, and jump straight into session controls.',
     openSessions: 'Open Sessions',
     openSettings: 'Open Settings',
     chart: {
@@ -545,9 +634,140 @@ export const enClientLang = {
       },
     },
   },
+  cart: {
+    title: 'Cart',
+    description: 'Review items before checkout.',
+    emptyDescription: 'Your cart is empty. Browse the shop to add products.',
+    drawer: {
+      title: 'Your cart',
+      emptyTitle: 'Your cart is empty',
+      emptyDescription: 'Add products from the shop to see them here.',
+      subtotal: 'Subtotal',
+      checkout: 'Checkout',
+      checkoutGuestHint: 'You can review your cart as a guest. Sign in anytime for account perks.',
+      checkoutSignInOptional: 'Sign in (optional)',
+      checkoutSignIn: 'Sign in to review your cart and complete checkout.',
+      checkoutSignInAction: 'Sign in to checkout',
+      remove: 'Remove item',
+      quantity: 'Qty',
+    },
+    items: {
+      everydayTote: 'Everyday tote bag',
+      ceramicMug: 'Ceramic mug set',
+      deskLamp: 'Desk lamp',
+    },
+  },
+  blog: {
+    title: 'News & Blog',
+    description: 'Stories, updates, and inspiration from Tanlabs-shop.',
+    readMore: 'Read article',
+    filters: {
+      sidebarLabel: 'Blog filters',
+      search: 'Search articles',
+      searchPlaceholder: 'Search articles...',
+      categories: 'Categories',
+      sortNewest: 'Newest',
+      sortOldest: 'Oldest',
+      sortAz: 'A–Z',
+      noResults: 'No articles found.',
+      uncategorized: 'Uncategorized',
+    },
+    categories: {
+      all: 'All',
+    },
+    detail: {
+      notFoundTitle: 'Article not found',
+      notFoundDescription: 'This article may have been removed or is not published yet.',
+      backToBlog: 'Back to blog',
+    },
+  },
+  about: {
+    title: 'About Us',
+    description: 'Learn more about Tanlabs-shop and get in touch with our team.',
+    heroTitle: 'About Tanlabs-shop',
+    heroDescription:
+      'We curate thoughtful products for everyday living. Reach out with questions about orders, products, or partnerships.',
+    imageAlt: 'Tanlabs-shop studio workspace',
+    contactInfoTitle: 'Visit us',
+    contactAddress: '12 Nguyen Hue, District 1, Ho Chi Minh City',
+    contactHours: 'Mon–Sat, 9:00 AM – 6:00 PM',
+    contactPhone: '+84 28 1234 5678',
+    contactPhoneHref: '+842812345678',
+    contactChannels: [
+      { label: 'General inquiries', email: 'hello@tanlabs.local' },
+      { label: 'Customer support', email: 'support@tanlabs.local' },
+      { label: 'Partnerships', email: 'partners@tanlabs.local' },
+    ],
+    form: {
+      title: 'Send us a message',
+      fullName: 'Full name',
+      email: 'Email',
+      phone: 'Phone number',
+      inquiryLabel: 'What can we help with?',
+      inquiryOptions: {
+        orders: 'Orders',
+        products: 'Products',
+        returns: 'Returns',
+        partnerships: 'Partnerships',
+        other: 'Other',
+      },
+      message: 'Message',
+      submit: 'Send message',
+      required: 'Required',
+      successTitle: 'Message sent',
+      successDescription: 'Thanks for reaching out. Our team will reply within one business day.',
+    },
+  },
+  partnership: {
+    title: 'Partnership',
+    description: 'Collaborate with Tanlabs-shop on retail, brand, and distribution opportunities.',
+    body: 'We partner with creators, retailers, and brands that share our focus on thoughtful everyday products. Tell us about your idea and our team will follow up.',
+    highlights: {
+      retail: {
+        title: 'Retail partners',
+        description: 'Stock Tanlabs-shop picks in your store or online marketplace.',
+      },
+      brand: {
+        title: 'Brand collaborations',
+        description: 'Co-create collections and limited releases with our merchandising team.',
+      },
+      distribution: {
+        title: 'Distribution',
+        description: 'Expand reach through regional fulfillment and wholesale programs.',
+      },
+    },
+    contactTitle: 'Get in touch',
+    contactDescription: 'Email our partnerships team or use the contact form on About Us.',
+    contactEmail: 'partners@tanlabs.local',
+    cta: 'Contact partnerships team',
+  },
+  footer: {
+    tagline: 'Quality picks for everyday life.',
+    columns: {
+      shop: 'Shop',
+      support: 'Support',
+      company: 'Company',
+    },
+    links: {
+      allProducts: 'All products',
+      deals: 'Deals',
+      cart: 'Cart',
+      help: 'Help center',
+      contact: 'Contact',
+      shipping: 'Shipping & returns',
+      about: 'About us',
+      careers: 'Careers',
+      privacy: 'Privacy policy',
+      terms: 'Terms of service',
+    },
+    copyright: '© {year} Tanlabs-shop. Demo storefront.',
+  },
   myAccount: {
     title: 'Settings',
     description: 'Manage your account profile, preferences, and billing.',
+    sidebar: {
+      backLabel: 'Back to account settings',
+    },
     sections: {
       accountTitle: 'Account',
       accountDescription: 'Review profile details and manage account security.',

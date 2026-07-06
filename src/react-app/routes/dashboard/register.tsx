@@ -1,11 +1,10 @@
-import { RegisterForm } from '@/features/auth';
-import { AuthLayout } from '@/features/auth';
 import { useSearchParams } from 'react-router-dom';
-
-import { getClientLang } from '@/shared/i18n';
 import { useLocale } from '@tanlabs/providers';
 
-export function RegisterPage() {
+import { RegisterForm } from '@/features/auth';
+import { getClientLang } from '@/shared/i18n';
+
+export function RegisterRoute() {
   const { locale } = useLocale();
   const lang = getClientLang(locale);
   const [searchParams] = useSearchParams();
@@ -33,15 +32,5 @@ export function RegisterPage() {
               }
             : undefined;
 
-  return (
-    <AuthLayout>
-      <RegisterForm
-        key={locale}
-        title={lang.register.formTitle}
-        description={lang.register.formDescription}
-        lang={lang.register}
-        notice={notice}
-      />
-    </AuthLayout>
-  );
+  return <RegisterForm key={locale} lang={lang.register} notice={notice} />;
 }

@@ -97,6 +97,10 @@ interface BrowserApiClientOptions {
   clearSession: () => void;
   getToken: () => string | null;
   redirectToLogin?: () => void;
+  /** When false, skip refresh-and-retry for unauthenticated API calls (shop guest browsing). */
+  shouldAttemptSilentRefresh?: () => boolean;
+  /** When false, auth failures clear session without navigating to login. */
+  shouldRedirectUnauthenticated?: () => boolean;
   saveRefresh: (refreshResponse: RefreshResponse) => void;
   retryConfig?: RetryConfig;
 }
@@ -104,6 +108,7 @@ interface BrowserApiClientOptions {
 const PUBLIC_AUTH_PATHS = new Set([
   '/auth/login',
   '/auth/refresh',
+  '/auth/public-config',
   '/auth/forgot-password',
   '/auth/register',
   '/auth/email-verification/verify',
@@ -111,6 +116,22 @@ const PUBLIC_AUTH_PATHS = new Set([
   '/auth/reset-password',
   '/auth/account-setup',
 ]);
+
+/** API paths guests may call without a session (e.g. shop blog). */
+const PUBLIC_API_PREFIXES = ['/blog/'];
+
+function allowsUnauthenticatedRequest(path: string): boolean {
+  const normalizedPath = path.split('?')[0];
+  if (!normalizedPath) {
+    return false;
+  }
+
+  if (PUBLIC_AUTH_PATHS.has(normalizedPath)) {
+    return true;
+  }
+
+  return PUBLIC_API_PREFIXES.some((prefix) => normalizedPath.startsWith(prefix));
+}
 
 export function createBrowserApiClient({
   apiBaseUrl = getDefaultApiBaseUrl(),
@@ -124,6 +145,8 @@ export function createBrowserApiClient({
       window.location.href = '/login';
     }
   },
+  shouldAttemptSilentRefresh = () => true,
+  shouldRedirectUnauthenticated = () => true,
   saveRefresh,
   retryConfig,
 }: BrowserApiClientOptions) {
@@ -326,19 +349,24 @@ export function createBrowserApiClient({
     allowRetry = true,
   ): Promise<T> {
     const method = (options.method || 'GET').toUpperCase();
-    const normalizedPath = path.split('?')[0];
-    const isAuthBootstrapPath = Boolean(normalizedPath && PUBLIC_AUTH_PATHS.has(normalizedPath));
+    const isPublicRequest = allowsUnauthenticatedRequest(path);
     let token = getToken();
 
-    if (!token && !isAuthBootstrapPath) {
-      try {
-        await refreshSession();
-        token = getToken();
-      } catch (error) {
-        redirectToLogin();
-        throw error instanceof ApiError
-          ? error
-          : new ApiError(401, 'Authentication required', 'AUTH_REFRESH_INVALID');
+    if (!token && !isPublicRequest) {
+      if (shouldAttemptSilentRefresh()) {
+        try {
+          await refreshSession();
+          token = getToken();
+        } catch (error) {
+          if (shouldRedirectUnauthenticated()) {
+            redirectToLogin();
+          }
+          throw error instanceof ApiError
+            ? error
+            : new ApiError(401, 'Authentication required', 'AUTH_REFRESH_INVALID');
+        }
+      } else {
+        throw new ApiError(401, 'Authentication required', 'AUTH_REFRESH_INVALID');
       }
     }
 
@@ -360,20 +388,24 @@ export function createBrowserApiClient({
     const data = (await parseJsonBody<T>(response)) as T | ErrorResponseEnvelope;
 
     if (!response.ok) {
-      if (shouldAttemptRefreshFromUnauthorized(response, data) && !isAuthBootstrapPath) {
+      if (shouldAttemptRefreshFromUnauthorized(response, data) && !isPublicRequest) {
         if (allowRetry) {
           try {
             await refreshSession();
             return request<T>(path, options, false);
           } catch (refreshError) {
             clearSession();
-            redirectToLogin();
+            if (shouldRedirectUnauthenticated()) {
+              redirectToLogin();
+            }
             throw refreshError;
           }
         }
 
         clearSession();
-        redirectToLogin();
+        if (shouldRedirectUnauthenticated()) {
+          redirectToLogin();
+        }
       }
 
       throw toApiError(response, data as ErrorResponseEnvelope);

@@ -5,8 +5,6 @@ import { CLIENT_AUTH_ROUTES, CLIENT_PUBLIC_ROUTES, SESSION_TERMINATED_ROUTE } fr
 
 import { ProtectedRoute, PublicRoute } from './route-guards';
 import { RootLayout } from './root-layout';
-import { LoginPage } from '../routes/login';
-import { RegisterPage } from '../routes/register';
 import { VerifyEmailPage } from '../routes/verify-email';
 import { ForgotPasswordPage } from '../routes/forgot-password';
 import { SessionEndedPage } from '../routes/session-ended';
@@ -28,16 +26,6 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       {
-        path: CLIENT_PUBLIC_ROUTES.login,
-        element: <PublicRoute />,
-        children: [{ index: true, element: <LoginPage /> }],
-      },
-      {
-        path: CLIENT_PUBLIC_ROUTES.register,
-        element: <PublicRoute />,
-        children: [{ index: true, element: <RegisterPage /> }],
-      },
-      {
         path: CLIENT_PUBLIC_ROUTES.verifyEmail,
         element: <PublicRoute />,
         children: [{ index: true, element: <VerifyEmailPage /> }],
@@ -53,22 +41,33 @@ export const router = createBrowserRouter([
       },
       {
         path: '/',
-        element: <ProtectedRoute />,
+        element: <DashboardLayout />,
         errorElement: <RouteErrorPage />,
         children: [
+          { index: true, ...lazyPage(() => import('../routes/dashboard/index'), 'DashboardPage') },
+          { path: 'cart', ...lazyPage(() => import('../routes/dashboard/cart'), 'CartRoute') },
+          { path: 'blog', ...lazyPage(() => import('../routes/dashboard/blog'), 'BlogRoute') },
+          { path: 'blog/:slug', ...lazyPage(() => import('../routes/dashboard/blog-detail'), 'BlogPostDetailRoute') },
+          { path: 'about', ...lazyPage(() => import('../routes/dashboard/about'), 'AboutRoute') },
+          { path: 'partnership', ...lazyPage(() => import('../routes/dashboard/partnership'), 'PartnershipRoute') },
           {
-            element: <DashboardLayout />,
-            errorElement: <RouteErrorPage />,
+            element: <PublicRoute />,
             children: [
-              { index: true, ...lazyPage(() => import('../routes/dashboard/index'), 'DashboardPage') },
+              { path: 'login', ...lazyPage(() => import('../routes/dashboard/login'), 'LoginRoute') },
+              { path: 'register', ...lazyPage(() => import('../routes/dashboard/register'), 'RegisterRoute') },
+            ],
+          },
+          {
+            element: <ProtectedRoute />,
+            children: [
               { path: 'settings', element: <SettingsRedirectRoute /> },
               { path: 'settings/account', ...lazyPage(() => import('../routes/dashboard/settings'), 'SettingsAccountRoute') },
               { path: 'settings/general', ...lazyPage(() => import('../routes/dashboard/settings'), 'SettingsGeneralRoute') },
               { path: 'settings/billing', ...lazyPage(() => import('../routes/dashboard/settings'), 'SettingsBillingRoute') },
               { path: 'my-account', element: <MyAccountRedirectRoute /> },
-              { path: '*', element: <Navigate to={CLIENT_AUTH_ROUTES.dashboard} replace /> },
             ],
           },
+          { path: '*', element: <Navigate to={CLIENT_AUTH_ROUTES.dashboard} replace /> },
         ],
       },
     ],

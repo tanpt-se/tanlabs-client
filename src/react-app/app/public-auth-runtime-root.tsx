@@ -1,12 +1,19 @@
 'use client';
 
+import { useEffect } from 'react';
+
 import { createPublicAuthRequests } from '@/features/auth/lib/public-auth-requests';
+import {
+  fetchPublicOAuthConfig,
+  setPublicOAuthConfig,
+} from '@/features/auth/lib/public-oauth-config';
 
 import { CLIENT_LOGIN_RATE_LIMIT_COOKIE, CLIENT_PUBLIC_ROUTES } from '@/auth-config';
 import { getClientConfig } from '@/shared/config/env';
 import { CLIENT_API_ROUTES } from '@/shared/http';
 import { clearSession, saveSession } from '@/shared/auth';
 import { configurePublicAuthRuntime } from '@/shared/auth/public-auth-runtime';
+import { buildOpenShopLoginUrl } from '@/shared/routing/shop-login';
 import { api } from '@/shared/http/client';
 
 let configured = false;
@@ -19,12 +26,12 @@ function ensurePublicAuthRuntimeConfigured() {
   const cfg = getClientConfig();
   configurePublicAuthRuntime({
     routes: {
-      login: CLIENT_PUBLIC_ROUTES.login,
+      login: buildOpenShopLoginUrl(),
       register: CLIENT_PUBLIC_ROUTES.register,
       verifyEmail: CLIENT_PUBLIC_ROUTES.verifyEmail,
-      accountSetup: CLIENT_PUBLIC_ROUTES.login,
+      accountSetup: buildOpenShopLoginUrl(),
       forgotPassword: CLIENT_PUBLIC_ROUTES.forgotPassword,
-      resetPassword: CLIENT_PUBLIC_ROUTES.login,
+      resetPassword: buildOpenShopLoginUrl(),
     },
     requests: createPublicAuthRequests({
       post: (path, body) => api.post(path, body),
@@ -40,7 +47,6 @@ function ensurePublicAuthRuntimeConfigured() {
     }),
     getApiBaseUrl: () => cfg.apiBaseUrl,
     getTurnstileSiteKey: () => cfg.turnstile.siteKey || undefined,
-    getGoogleOAuthEnabled: () => cfg.oauth.googleEnabled,
     apiPost: (path, body) => api.post(path, body),
     usersSocialLinkStart: (provider) => `/users/me/social-link/${provider}`,
     loginRateLimitCookieName: CLIENT_LOGIN_RATE_LIMIT_COOKIE,
@@ -54,6 +60,11 @@ function ensurePublicAuthRuntimeConfigured() {
 
 export function PublicAuthRuntimeRoot() {
   ensurePublicAuthRuntimeConfigured();
+
+  useEffect(() => {
+    const cfg = getClientConfig();
+    void fetchPublicOAuthConfig(cfg.apiBaseUrl).then(setPublicOAuthConfig);
+  }, []);
 
   return null;
 }

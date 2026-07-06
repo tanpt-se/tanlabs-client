@@ -2,7 +2,7 @@ import { withQuery } from '@tanlabs/contracts';
 
 import { getPublicAuthRuntime } from './public-auth-runtime';
 
-export type SocialAuthProvider = 'google';
+export type SocialAuthProvider = 'google' | 'facebook';
 
 const WEB_AUDIENCE = 'web';
 

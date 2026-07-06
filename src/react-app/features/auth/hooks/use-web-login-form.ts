@@ -21,6 +21,8 @@ import {
   persistLoginRateLimit,
   restoreLoginRateLimit,
 } from '@/features/auth/services/login-rate-limit';
+import { clearClientLoggedOutMark } from '@/shared/auth';
+import { dispatchSessionSaved } from '@/shared/auth/session-events';
 import { getPublicAuthRuntime } from '@/shared/auth/public-auth-runtime';
 
 export function useWebLoginForm<
@@ -39,6 +41,7 @@ export function useWebLoginForm<
   lang: TLang,
   nextPath: string | undefined,
   resolveAuthenticatedRedirect: (path?: string) => string,
+  options?: { onLoginSuccess?: () => void },
 ) {
   const navigate = useNavigate();
   const runtime = getPublicAuthRuntime();
@@ -113,7 +116,10 @@ export function useWebLoginForm<
 
       clearTwoFactorState();
       clearRateLimit();
+      clearClientLoggedOutMark();
       runtime.saveClientSession?.(response as LoginResponse);
+      dispatchSessionSaved();
+      options?.onLoginSuccess?.();
       navigate(resolvedNextPath, { replace: true });
     } catch (requestError) {
       const resolvedError = resolveLoginRequestError({

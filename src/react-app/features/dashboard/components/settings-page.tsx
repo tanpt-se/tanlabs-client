@@ -2,6 +2,11 @@
 
 import type { ReactNode } from 'react';
 
+import {
+  Cog6ToothIcon,
+  CreditCardIcon,
+  UserIcon,
+} from '@heroicons/react/24/outline';
 import { Avatar } from '@astryxdesign/core/Avatar';
 import { Banner } from '@astryxdesign/core/Banner';
 import { Button } from '@astryxdesign/core/Button';
@@ -12,16 +17,18 @@ import { Switch } from '@astryxdesign/core/Switch';
 import { Text } from '@astryxdesign/core/Text';
 import { TextInput } from '@astryxdesign/core/TextInput';
 import { FormDialog } from '@tanlabs/astryx';
-import { SettingsSectionPanel } from '@/ui/settings';
+import { SettingsSidebarLayout } from '@/ui/settings-sidebar';
 import { QRCodeSVG } from 'qrcode.react';
 import { useLocale, useTheme } from '@tanlabs/providers';
 
 import { useClientMyAccount } from '@/features/account/hooks/use-client-my-account';
-import { getClientConfig } from '@/shared/config/env';
+import { usePublicOAuthConfig } from '@/features/auth/lib/public-oauth-config';
+import type { SettingsSectionId } from '@/features/dashboard/lib/settings-section';
 import { LOCALE_OPTIONS } from '@/shared/i18n/locale-options';
 import type { ClientLang } from '@/shared/i18n';
+import { CLIENT_AUTH_ROUTES } from '@/shared/routing';
 
-export type SettingsSectionId = 'account' | 'general' | 'billing';
+export type { SettingsSectionId };
 
 function SettingsRow({
   title,
@@ -66,7 +73,7 @@ export function SettingsPage({
   initialUser: { id?: string } | null;
   onLogout: () => void | Promise<void>;
 }) {
-  const googleEnabled = getClientConfig().oauth.googleEnabled;
+  const { googleEnabled } = usePublicOAuthConfig();
   const { locale, setLocale } = useLocale();
   const { theme, setTheme } = useTheme();
   const currentLocaleLabel =
@@ -128,45 +135,72 @@ export function SettingsPage({
     copyAuthUrl,
   } = useClientMyAccount({ lang, initialUser });
 
-  return (
-    <>
-      {section === 'account' ? (
-        <SettingsSectionPanel>
-          <HStack gap={4} vAlign="start">
-            <Avatar name={accountEmail} size="large" alt={accountEmail} />
-            <VStack gap={2}>
-              <HStack gap={2}>
-                <Button label={lang.account.changeImage} variant="primary" size="sm" />
-                <Button label={lang.account.removeImage} variant="secondary" size="sm" />
-              </HStack>
-              <Text type="supporting" color="secondary">
-                {lang.account.imageHint}
-              </Text>
-            </VStack>
-          </HStack>
-          <TextInput
-            label={lang.account.nameLabel}
-            value={fullName || lang.account.fallbackName}
-            onChange={() => undefined}
-            isDisabled
-          />
-          <TextInput
-            label={lang.account.roleLabel}
-            value={accountRole}
-            onChange={() => undefined}
-            isDisabled
-          />
-          <TextInput
-            label={lang.account.emailLabel}
-            type="email"
-            value={accountEmail}
-            onChange={() => undefined}
-            isDisabled
-          />
+  const sidebarSections = [
+    {
+      id: 'account' as const,
+      label: lang.sections.accountTitle,
+      href: CLIENT_AUTH_ROUTES.settingsAccount,
+      icon: UserIcon,
+    },
+    {
+      id: 'general' as const,
+      label: lang.sections.generalTitle,
+      href: CLIENT_AUTH_ROUTES.settingsGeneral,
+      icon: Cog6ToothIcon,
+    },
+    {
+      id: 'billing' as const,
+      label: lang.sections.billingTitle,
+      href: CLIENT_AUTH_ROUTES.settingsBilling,
+      icon: CreditCardIcon,
+    },
+  ];
 
-          <SettingsGroupHeading label={lang.sections.securityTitle} />
-          <Switch
-            label={lang.google.title}
+  const sectionTitle =
+    section === 'account'
+      ? lang.sections.accountTitle
+      : section === 'general'
+        ? lang.sections.generalTitle
+        : lang.sections.billingTitle;
+
+  const sectionContent =
+    section === 'account' ? (
+      <VStack gap={4} hAlign="stretch" width="100%">
+        <HStack gap={4} vAlign="start">
+          <Avatar name={accountEmail} size="large" alt={accountEmail} />
+          <VStack gap={2}>
+            <HStack gap={2}>
+              <Button label={lang.account.changeImage} variant="primary" size="sm" />
+              <Button label={lang.account.removeImage} variant="secondary" size="sm" />
+            </HStack>
+            <Text type="supporting" color="secondary">
+              {lang.account.imageHint}
+            </Text>
+          </VStack>
+        </HStack>
+        <TextInput
+          label={lang.account.nameLabel}
+          value={fullName || lang.account.fallbackName}
+          onChange={() => undefined}
+          isDisabled
+        />
+        <TextInput
+          label={lang.account.roleLabel}
+          value={accountRole}
+          onChange={() => undefined}
+          isDisabled
+        />
+        <TextInput
+          label={lang.account.emailLabel}
+          type="email"
+          value={accountEmail}
+          onChange={() => undefined}
+          isDisabled
+        />
+
+        <SettingsGroupHeading label={lang.sections.securityTitle} />
+        <Switch
+          label={lang.google.title}
             description={
               linkedGoogleEmail
                 ? lang.google.connected.replace('{email}', linkedGoogleEmail)
@@ -227,11 +261,9 @@ export function SettingsPage({
               <Button label={lang.controls.deleteAccountAction} variant="destructive" isDisabled />
             }
           />
-        </SettingsSectionPanel>
-      ) : null}
-
-      {section === 'general' ? (
-        <SettingsSectionPanel>
+      </VStack>
+    ) : section === 'general' ? (
+      <VStack gap={4} hAlign="stretch" width="100%">
           <SettingsRow
             title={lang.preferences.languageTitle}
             description={lang.preferences.languageDescription}
@@ -277,17 +309,27 @@ export function SettingsPage({
               <Button label={shell.logout} variant="secondary" clickAction={() => void onLogout()} />
             }
           />
-        </SettingsSectionPanel>
-      ) : null}
+      </VStack>
+    ) : (
+      <VStack gap={4} hAlign="stretch" width="100%">
+        <EmptyState
+          title={lang.billing.emptyTitle}
+          description={lang.billing.emptyDescription}
+        />
+      </VStack>
+    );
 
-      {section === 'billing' ? (
-        <SettingsSectionPanel>
-          <EmptyState
-            title={lang.billing.emptyTitle}
-            description={lang.billing.emptyDescription}
-          />
-        </SettingsSectionPanel>
-      ) : null}
+  return (
+    <>
+      <SettingsSidebarLayout
+        activeSection={section}
+        backLabel={lang.sidebar.backLabel}
+        sections={sidebarSections}
+        sidebarTitle={lang.title}
+        sectionTitle={sectionTitle}
+      >
+        {sectionContent}
+      </SettingsSidebarLayout>
 
       <FormDialog
         isOpen={showGoogleUnlinkConfirm}

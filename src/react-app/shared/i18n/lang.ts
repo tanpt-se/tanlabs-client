@@ -2,18 +2,14 @@ import { buildDashboardHeaderText, type DashboardHeaderText } from './dashboard-
 import type { Locale } from '@/lib/platform/preferences';
 import type { DeepWiden } from '@tanlabs/types';
 
-import { CLIENT_AUTH_ROUTES } from '@/shared/routing';
+import { CLIENT_AUTH_ROUTES, CLIENT_PUBLIC_ROUTES } from '@/shared/routing';
 
 import { enClientLang } from './messages/en';
-import { jaClientLang } from './messages/ja';
-import { koClientLang } from './messages/ko';
 import { viClientLang } from './messages/vi';
 
 const clientLangByLocale = {
   en: enClientLang,
   vi: viClientLang,
-  ja: jaClientLang,
-  ko: koClientLang,
 } as const;
 
 export type ClientLang = DeepWiden<typeof enClientLang>;
@@ -55,9 +51,79 @@ export function resolveDashboardHeaderText(pathname: string, lang: ClientLang): 
     };
   }
 
+  if (pathname === CLIENT_AUTH_ROUTES.cart) {
+    return {
+      breadcrumb: lang.cart.title,
+      title: lang.cart.title,
+      description: lang.cart.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_AUTH_ROUTES.blog) {
+    return {
+      breadcrumb: lang.blog.title,
+      title: lang.blog.title,
+      description: lang.blog.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname.startsWith(`${CLIENT_AUTH_ROUTES.blog}/`)) {
+    return {
+      breadcrumb: lang.blog.title,
+      title: lang.blog.detail.notFoundTitle,
+      description: lang.blog.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_AUTH_ROUTES.about) {
+    return {
+      breadcrumb: lang.about.title,
+      title: lang.about.title,
+      description: lang.about.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_AUTH_ROUTES.partnership) {
+    return {
+      breadcrumb: lang.partnership.title,
+      title: lang.partnership.title,
+      description: lang.partnership.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_PUBLIC_ROUTES.register) {
+    return {
+      breadcrumb: lang.register.title,
+      title: lang.register.title,
+      description: lang.register.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
+  if (pathname === CLIENT_PUBLIC_ROUTES.login) {
+    return {
+      breadcrumb: lang.login.title,
+      title: lang.login.title,
+      description: lang.login.description,
+      fallbackUser: lang.shell.fallbackUser,
+      logout: lang.shell.logout,
+    };
+  }
+
   if (pathname === CLIENT_AUTH_ROUTES.settings || pathname.startsWith('/settings/')) {
     return {
-      breadcrumb: lang.shell.nav.settings,
+      breadcrumb: lang.shell.header.myAccount,
       title: lang.myAccount.title,
       description: lang.myAccount.description,
       fallbackUser: lang.shell.fallbackUser,
@@ -66,27 +132,4 @@ export function resolveDashboardHeaderText(pathname: string, lang: ClientLang): 
   }
 
   return buildDashboardHeaderText(lang);
-}
-
-export function resolveDashboardPageChrome(pathname: string, lang: ClientLang) {
-  const isSettingsSubpage =
-    pathname === CLIENT_AUTH_ROUTES.settingsAccount ||
-    pathname === CLIENT_AUTH_ROUTES.settingsGeneral ||
-    pathname === CLIENT_AUTH_ROUTES.settingsBilling;
-
-  if (isSettingsSubpage) {
-    const headerText = resolveDashboardHeaderText(pathname, lang);
-    return {
-      breadcrumbs: [
-        { label: lang.shell.nav.dashboard, href: CLIENT_AUTH_ROUTES.dashboard },
-        { label: lang.shell.nav.settings, href: CLIENT_AUTH_ROUTES.settingsAccount },
-        { label: headerText.title },
-      ],
-    };
-  }
-
-  const headerText = resolveDashboardHeaderText(pathname, lang);
-  return {
-    breadcrumbs: [{ label: headerText.breadcrumb, description: headerText.description }],
-  };
 }

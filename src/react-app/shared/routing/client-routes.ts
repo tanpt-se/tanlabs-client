@@ -12,6 +12,21 @@ export {
 
 export const SESSION_TERMINATED_ROUTE = '/auth/session-ended';
 
+export { isClientProtectedPath } from './protected-paths';
+export {
+  appendNextQueryParam,
+  buildLoginUrl,
+  buildLoginUrlFromLocation,
+  consumeAuthReturnPath,
+  PENDING_AUTH_RETURN_KEY,
+  stashAuthReturnPath,
+} from './login-url';
+export {
+  LOGIN_REASON_QUERY_PARAM,
+  buildOpenShopLoginUrl,
+  buildOpenShopLoginUrlFromLocation,
+} from './shop-login';
+
 export const {
   isPublicEntryPath,
   isAuthenticatedEntryPath,

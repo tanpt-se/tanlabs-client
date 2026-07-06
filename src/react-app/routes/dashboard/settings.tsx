@@ -1,26 +1,23 @@
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useLocale } from '@tanlabs/providers';
 
+import { useClientLogout } from '@/features/auth';
 import { SettingsPage } from '@/features/dashboard/components/settings-page';
 import { getClientLang } from '@/shared/i18n';
 import { getUser } from '@/shared/auth';
-import { logoutSession } from '@/shared/http/client';
-import { CLIENT_AUTH_ROUTES, CLIENT_PUBLIC_ROUTES } from '@/shared/routing';
+import { CLIENT_AUTH_ROUTES } from '@/shared/routing';
 
 function useSettingsRouteProps() {
   const { locale } = useLocale();
   const lang = getClientLang(locale);
   const user = getUser();
-  const navigate = useNavigate();
+  const logout = useClientLogout();
 
   return {
     lang: lang.myAccount,
     shell: lang.shell,
     initialUser: user ? { id: user.id } : null,
-    onLogout: async () => {
-      await logoutSession();
-      navigate(CLIENT_PUBLIC_ROUTES.login, { replace: true });
-    },
+    onLogout: logout,
   };
 }
 

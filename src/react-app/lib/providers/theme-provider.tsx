@@ -19,7 +19,7 @@ import {
   themeCookieName,
 } from '@/lib/platform';
 
-const LOCALES = ['en', 'vi', 'ja', 'ko'] as const;
+const LOCALES = ['en', 'vi'] as const;
 
 function getSystemTheme(): ResolvedThemeMode {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {

@@ -1,4 +1,4 @@
-export type Locale = 'en' | 'vi' | 'ja' | 'ko';
+export type Locale = 'en' | 'vi';
 export type ResolvedThemeMode = 'light' | 'dark';
 export type ThemeMode = 'system' | ResolvedThemeMode;
 
@@ -7,7 +7,7 @@ export const themeCookieName = 'authlab-theme';
 export const PREFERENCE_COOKIE_MAX_AGE = 31_536_000;
 
 export function isLocale(value: string | null | undefined): value is Locale {
-  return value === 'en' || value === 'vi' || value === 'ja' || value === 'ko';
+  return value === 'en' || value === 'vi';
 }
 
 export function resolveLocale(value: string | null | undefined, fallback: Locale = 'en'): Locale {

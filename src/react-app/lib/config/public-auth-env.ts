@@ -1,8 +1,5 @@
 export interface PublicAuthClientConfig {
   apiBaseUrl: string;
-  oauth: {
-    googleEnabled: boolean;
-  };
   turnstile: {
     siteKey: string;
   };
@@ -38,9 +35,6 @@ export function readPublicAuthClientConfig(csrfCookieFallback: string): PublicAu
 
   return {
     apiBaseUrl: apiUrl?.replace(/\/$/, '') || '/api',
-    oauth: {
-      googleEnabled: readEnv('VITE_AUTH_GOOGLE_ENABLED') === 'true',
-    },
     turnstile: {
       siteKey: readEnv('VITE_TURNSTILE_SITE_KEY') || '',
     },

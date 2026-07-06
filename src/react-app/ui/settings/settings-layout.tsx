@@ -9,6 +9,8 @@ import { List, ListItem } from '@astryxdesign/core/List';
 import { Tab, TabList } from '@astryxdesign/core/TabList';
 import { Heading, Text } from '@astryxdesign/core/Text';
 
+import { APP_CONTENT_MAX_WIDTH } from '@/ui/app-container';
+
 export type SettingsSection = {
   id: string;
   label: string;
@@ -30,7 +32,7 @@ export function SettingsLayout({
   return (
     <Layout
       height="auto"
-      contentWidth={1440}
+      contentWidth={APP_CONTENT_MAX_WIDTH}
       start={
         isNarrow ? undefined : (
           <LayoutPanel hasDivider={false} width={260} padding={2}>

@@ -13,37 +13,6 @@ export function LocaleFlagAsset({ locale }: { locale: Locale }) {
     );
   }
 
-  if (locale === 'ja') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4 rounded-[3px]" aria-hidden="true">
-        <rect width="24" height="24" rx="2" fill="#fff" />
-        <circle cx="12" cy="12" r="5.2" fill="#BC002D" />
-      </svg>
-    );
-  }
-
-  if (locale === 'ko') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4 rounded-[3px]" aria-hidden="true">
-        <rect width="24" height="24" rx="2" fill="#fff" />
-        <path
-          d="M12 7.4a4.6 4.6 0 0 1 4.6 4.6H12a2.3 2.3 0 0 0-2.3 2.3A4.6 4.6 0 0 1 12 7.4Z"
-          fill="#C60C30"
-        />
-        <path
-          d="M12 16.6a4.6 4.6 0 0 1-4.6-4.6H12a2.3 2.3 0 0 0 2.3-2.3A4.6 4.6 0 0 1 12 16.6Z"
-          fill="#003478"
-        />
-        <g stroke="#111827" strokeWidth="1.1" strokeLinecap="round">
-          <path d="M5.2 7.2h3M5.7 8.6h3M5.2 10h3" />
-          <path d="M15.8 14h3M15.3 15.4h3M15.8 16.8h3" />
-          <path d="M15.8 7.2h3M15.8 8.6h3M15.8 10h3" />
-          <path d="M5.2 14h3M5.2 15.4h3M5.2 16.8h3" />
-        </g>
-      </svg>
-    );
-  }
-
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4 rounded-[3px]" aria-hidden="true">
       <rect width="24" height="24" rx="2" fill="#fff" />

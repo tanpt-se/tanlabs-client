@@ -21,6 +21,11 @@ export const CLIENT_AUTH_ROUTES = {
   settingsAccount: '/settings/account',
   settingsGeneral: '/settings/general',
   settingsBilling: '/settings/billing',
+  cart: '/cart',
+  blog: '/blog',
+  blogPost: (slug: string) => `/blog/${slug}`,
+  about: '/about',
+  partnership: '/partnership',
   /** @deprecated Use `settingsAccount`. Kept for redirects and OAuth return paths. */
   myAccount: '/settings/account',
 } as const;
@@ -34,9 +39,14 @@ export const PUBLIC_ENTRY_PATHS = [
   CLIENT_PUBLIC_ROUTES.forgotPassword,
 ] as const;
 
+/** Safe post-login/post-register return paths inside the shop shell (not auth-required routes). */
 export const AUTHENTICATED_ENTRY_PATHS = [
   CLIENT_AUTH_ROUTES.dashboard,
   CLIENT_AUTH_ROUTES.settings,
+  CLIENT_AUTH_ROUTES.cart,
+  CLIENT_AUTH_ROUTES.blog,
+  CLIENT_AUTH_ROUTES.about,
+  CLIENT_AUTH_ROUTES.partnership,
 ] as const;
 
 const publicEntrySet = new Set<string>(PUBLIC_ENTRY_PATHS);

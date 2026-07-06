@@ -1,5 +1,6 @@
 export const CLIENT_API_ROUTES = {
   auth: {
+    publicConfig: '/auth/public-config',
     login: '/auth/login',
     register: '/auth/register',
     verifyEmail: '/auth/email-verification/verify',
@@ -8,6 +9,11 @@ export const CLIENT_API_ROUTES = {
   },
   account: {
     me: '/users/me',
+  },
+  blog: {
+    categories: '/blog/categories',
+    posts: '/blog/posts',
+    post: (slug: string) => `/blog/posts/${slug}`,
   },
 } as const;
 
