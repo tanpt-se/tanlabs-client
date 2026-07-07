@@ -74,7 +74,7 @@ export function resolveDashboardHeaderText(pathname: string, lang: ClientLang): 
   if (pathname.startsWith(`${CLIENT_AUTH_ROUTES.blog}/`)) {
     return {
       breadcrumb: lang.blog.title,
-      title: lang.blog.detail.notFoundTitle,
+      title: lang.blog.detail.pageTitle,
       description: lang.blog.description,
       fallbackUser: lang.shell.fallbackUser,
       logout: lang.shell.logout,

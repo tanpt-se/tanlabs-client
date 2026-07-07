@@ -676,9 +676,11 @@ export const enClientLang = {
       all: 'All',
     },
     detail: {
+      pageTitle: 'Article',
       notFoundTitle: 'Article not found',
       notFoundDescription: 'This article may have been removed or is not published yet.',
       backToBlog: 'Back to blog',
+      previewBanner: 'Preview mode — this article is not visible to the public yet.',
     },
   },
   about: {

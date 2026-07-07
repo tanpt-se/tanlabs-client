@@ -42,10 +42,18 @@ export interface PublicBlogPostDetailResponse {
 }
 
 export type BlogBlockType =
+  | 'heading'
+  | 'paragraph'
+  | 'video'
+  | 'gallery'
+  | 'layout'
+  | 'button'
+  | 'divider'
+  | 'quote'
+  | 'list'
   | 'hero'
   | 'text'
   | 'image'
-  | 'button'
   | 'cards'
   | 'features'
   | 'cta';

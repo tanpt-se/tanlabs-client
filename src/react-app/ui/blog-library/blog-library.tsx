@@ -194,14 +194,25 @@ export function BlogLibrary({
       groups.set(key, current);
     }
 
-    return categories
+    const sections = categories
       .map((category) => ({
         key: category.slug,
         title: category.name,
         posts: groups.get(category.slug) ?? [],
       }))
       .filter((section) => section.posts.length > 0);
-  }, [activeCategory, categories, filteredPosts]);
+
+    const uncategorized = groups.get('uncategorized') ?? [];
+    if (uncategorized.length > 0) {
+      sections.push({
+        key: 'uncategorized',
+        title: lang.filters.uncategorized,
+        posts: uncategorized,
+      });
+    }
+
+    return sections;
+  }, [activeCategory, categories, filteredPosts, lang.filters.uncategorized]);
 
   const sortLabel =
     sortOrder === 'newest'
@@ -270,16 +281,19 @@ export function BlogLibrary({
               </Center>
             ) : (
               <VStack gap={6} hAlign="stretch">
-                {(groupedSections ?? [
-                  {
-                    key: activeCategory,
-                    title:
-                      activeCategory === 'all'
-                        ? lang.categories.all
-                        : categoryLabels.get(activeCategory) ?? activeCategory,
-                    posts: filteredPosts,
-                  },
-                ]).flatMap((section, index) => [
+                {(groupedSections && groupedSections.length > 0
+                  ? groupedSections
+                  : [
+                      {
+                        key: activeCategory,
+                        title:
+                          activeCategory === 'all'
+                            ? lang.categories.all
+                            : categoryLabels.get(activeCategory) ?? activeCategory,
+                        posts: filteredPosts,
+                      },
+                    ]
+                ).flatMap((section, index) => [
                   ...(index > 0 ? [<Divider key={`divider-${section.key}`} />] : []),
                   <BlogLibrarySection
                     key={section.key}

@@ -486,9 +486,11 @@ export const viClientLang = {
       all: 'Tất cả',
     },
     detail: {
+      pageTitle: 'Bài viết',
       notFoundTitle: 'Không tìm thấy bài viết',
       notFoundDescription: 'Bài viết có thể đã bị gỡ hoặc chưa được xuất bản.',
       backToBlog: 'Quay lại blog',
+      previewBanner: 'Chế độ xem trước — bài viết này chưa hiển thị công khai.',
     },
   },
   about: {

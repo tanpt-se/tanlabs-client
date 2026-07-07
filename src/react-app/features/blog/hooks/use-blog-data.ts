@@ -5,6 +5,7 @@ import { fetchAllPaginated } from '@/shared/http/fetch-all-pages';
 import {
   fetchBlogCategories,
   fetchBlogPostBySlug,
+  fetchBlogPostPreview,
   fetchBlogPosts,
 } from '../requests/blog.requests';
 import type { PublicBlogCategory, PublicBlogPostDetail, PublicBlogPostSummary } from '../types/blog.api';
@@ -84,7 +85,10 @@ export function useBlogPostsList(): AsyncState<PublicBlogPostSummary[]> {
   return { data, loading, error, reload };
 }
 
-export function useBlogPostDetail(slug: string): AsyncState<PublicBlogPostDetail | null> {
+export function useBlogPostDetail(
+  slug: string,
+  previewToken?: string | null,
+): AsyncState<PublicBlogPostDetail | null> {
   const [data, setData] = useState<PublicBlogPostDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,7 +105,11 @@ export function useBlogPostDetail(slug: string): AsyncState<PublicBlogPostDetail
     let active = true;
     setLoading(true);
     setError(null);
-    fetchBlogPostBySlug(slug)
+    const request = previewToken
+      ? fetchBlogPostPreview(slug, previewToken)
+      : fetchBlogPostBySlug(slug);
+
+    request
       .then((response) => {
         if (active) setData(response.post);
       })
@@ -117,7 +125,7 @@ export function useBlogPostDetail(slug: string): AsyncState<PublicBlogPostDetail
     return () => {
       active = false;
     };
-  }, [slug, reloadToken]);
+  }, [slug, previewToken, reloadToken]);
 
   return { data, loading, error, reload };
 }

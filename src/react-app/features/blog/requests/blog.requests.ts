@@ -23,3 +23,7 @@ export function fetchBlogPosts(query: {
 export function fetchBlogPostBySlug(slug: string) {
   return api.get<PublicBlogPostDetailResponse>(CLIENT_API_ROUTES.blog.post(slug));
 }
+
+export function fetchBlogPostPreview(slug: string, token: string) {
+  return api.get<PublicBlogPostDetailResponse>(CLIENT_API_ROUTES.blog.postPreview(slug, token));
+}

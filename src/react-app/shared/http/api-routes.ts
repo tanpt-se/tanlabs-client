@@ -14,6 +14,8 @@ export const CLIENT_API_ROUTES = {
     categories: '/blog/categories',
     posts: '/blog/posts',
     post: (slug: string) => `/blog/posts/${slug}`,
+    postPreview: (slug: string, token: string) =>
+      `/blog/posts/${slug}/preview?${new URLSearchParams({ token }).toString()}`,
   },
 } as const;
 

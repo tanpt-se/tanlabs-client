@@ -11,6 +11,7 @@ import { Heading, Text } from '@astryxdesign/core/Text';
 import { useBlogPostDetail } from '@/features/blog/hooks/use-blog-data';
 import { BlogContentRenderer } from '@/features/blog/components/blog-content-renderer';
 import { BLOG_POST_IMAGE_URL } from '@/features/blog/lib/blog-data';
+import { resolveMediaUrl } from '@/features/blog/lib/resolve-media-url';
 import { CLIENT_AUTH_ROUTES } from '@/shared/routing';
 
 import type { ClientLang } from '@/shared/i18n';
@@ -33,11 +34,13 @@ function formatPublishedDate(value: string | null) {
 export function BlogPostDetailPage({
   lang,
   slug,
+  previewToken,
 }: {
   lang: ClientLang['blog'];
   slug: string;
+  previewToken?: string | null;
 }) {
-  const { data: post, loading, error } = useBlogPostDetail(slug);
+  const { data: post, loading, error } = useBlogPostDetail(slug, previewToken);
 
   if (loading) {
     return (
@@ -63,12 +66,17 @@ export function BlogPostDetailPage({
     );
   }
 
-  const imageUrl = post.featuredImageUrl || BLOG_POST_IMAGE_URL;
+  const imageUrl = resolveMediaUrl(post.featuredImageUrl) || BLOG_POST_IMAGE_URL;
   const publishedLabel = formatPublishedDate(post.publishedAt);
   const categoryLabel = post.category?.name;
 
   return (
     <VStack gap={6} hAlign="stretch">
+      {previewToken ? (
+        <Text type="supporting" color="secondary">
+          {lang.detail.previewBanner}
+        </Text>
+      ) : null}
       <img
         src={imageUrl}
         alt={post.title}
